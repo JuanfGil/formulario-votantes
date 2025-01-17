@@ -244,6 +244,7 @@
 
         <div class="button-container">
             <button id="downloadButton">Descargar Excel</button>
+            <button id="deleteButton" style="background-color: #dc3545;">Eliminar Registros</button>
         </div>
     </div>
 
@@ -328,9 +329,19 @@
             XLSX.utils.book_append_sheet(wb, ws, "Registros");
             XLSX.writeFile(wb, "registros.xlsx");
         });
+
+        document.getElementById('deleteButton').addEventListener('click', function() {
+            if (confirm("¿Estás seguro de que deseas eliminar todos los registros? Esta acción no se puede deshacer.")) {
+                registros = [];
+                localStorage.removeItem('registros');
+                actualizarContadores();
+                alert("Todos los registros han sido eliminados.");
+            }
+        });
     </script>
 </body>
 </html>
+
 
 
 
