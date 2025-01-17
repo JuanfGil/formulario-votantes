@@ -242,6 +242,9 @@
             <label for="lider">Líder que registra</label>
             <input type="text" id="lider" placeholder="Nombre del líder">
 
+            <label for="nota">Nota</label>
+            <input type="text" id="nota" placeholder="Ingrese una nota opcional">
+
             <button type="submit">Registrar</button>
         </form>
 
@@ -272,6 +275,7 @@
                 direccion: document.getElementById('direccion').value,
                 sexo: document.getElementById('sexo').value,
                 edad: document.getElementById('edad').value,
+                nota: document.getElementById('nota').value,
                 lider: document.getElementById('lider').value,
                 fecha: new Date().toISOString()
             };
@@ -309,6 +313,7 @@
     </script>
 </body>
 </html>
+
 
 
 
