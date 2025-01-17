@@ -202,12 +202,13 @@
 
             <div class="form-group">
                 <label for="sexo">Sexo</label>
-                <select id="sexo">
+                <select id="sexo" onchange="mostrarOtroSexo(this)">
                     <option value="">Seleccione el sexo</option>
                     <option value="Masculino">Masculino</option>
                     <option value="Femenino">Femenino</option>
                     <option value="Otro">Otro</option>
                 </select>
+                <input type="text" id="otroSexo" placeholder="Especifique" style="display: none; margin-top: 10px;">
             </div>
 
             <div class="form-group">
@@ -247,10 +248,26 @@
     </div>
 
     <script>
+        function mostrarOtroSexo(select) {
+            const otroSexoInput = document.getElementById('otroSexo');
+            if (select.value === 'Otro') {
+                otroSexoInput.style.display = 'block';
+            } else {
+                otroSexoInput.style.display = 'none';
+                otroSexoInput.value = '';
+            }
+        }
+
         let registros = [];
 
         if (localStorage.getItem('registros')) {
             registros = JSON.parse(localStorage.getItem('registros'));
+            actualizarContadores();
+        }
+
+        function actualizarContadores() {
+            document.getElementById('todayCount').textContent = registros.length;
+            document.getElementById('totalCount').textContent = registros.length;
         }
 
         document.getElementById('voterForm').addEventListener('submit', function(e) {
@@ -261,18 +278,45 @@
                 telefono: document.getElementById('telefono').value,
                 municipio: document.getElementById('municipio').value,
                 direccion: document.getElementById('direccion').value,
-                sexo: document.getElementById('sexo').value,
+                sexo: document.getElementById('sexo').value === 'Otro' ? document.getElementById('otroSexo').value : document.getElementById('sexo').value,
                 edad: document.getElementById('edad').value,
                 lider: document.getElementById('lider').value,
-                notas: document.getElementById('notas').value
+                notas: document.getElementById('notas').value,
+                fecha: new Date().toISOString()
             };
 
             registros.push(registro);
             localStorage.setItem('registros', JSON.stringify(registros));
-            alert('Registro guardado exitosamente');
+            actualizarContadores();
+
+            document.getElementById('successMessage').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('successMessage').style.display = 'none';
+            }, 3000);
+        });
+
+        document.getElementById('downloadButton').addEventListener('click', function() {
+            const wb = XLSX.utils.book_new();
+            const datos = registros.map(registro => ({
+                'Cédula': registro.cedula,
+                'Nombre': registro.nombre,
+                'Teléfono': registro.telefono,
+                'Municipio': registro.municipio,
+                'Dirección': registro.direccion,
+                'Sexo': registro.sexo,
+                'Edad': registro.edad,
+                'Líder': registro.lider,
+                'Notas': registro.notas,
+                'Fecha': new Date(registro.fecha).toLocaleString()
+            }));
+
+            const ws = XLSX.utils.json_to_sheet(datos);
+            XLSX.utils.book_append_sheet(wb, ws, "Registros");
+            XLSX.writeFile(wb, "registros.xlsx");
         });
     </script>
 </body>
 </html>
+
 
 
