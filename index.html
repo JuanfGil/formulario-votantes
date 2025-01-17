@@ -9,11 +9,10 @@
 
     <!-- Scripts de Firebase -->
     <script type="module">
-        // Importar las funciones necesarias desde los SDKs de Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
         import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
+        import { writeFile } from "https://cdn.jsdelivr.net/npm/xlsx/xlsx.mjs";
 
-        // Configuración de tu aplicación Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyBhtFQywau5AqV84SxWiyDXcak5oWG5NBg",
             authDomain: "formulario-oficina-votantes.firebaseapp.com",
@@ -24,17 +23,14 @@
             measurementId: "G-318KXX95NN"
         };
 
-        // Inicializar Firebase
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
 
-        // Función para guardar datos en Firebase
         function guardarRegistroEnFirebase(registro) {
             const dbRef = ref(database, 'registros/');
             return push(dbRef, registro);
         }
 
-        // Actualizar contadores de registros
         function actualizarContadores() {
             const dbRef = ref(database, 'registros/');
             onValue(dbRef, (snapshot) => {
@@ -53,6 +49,35 @@
 
                 document.getElementById('todayCount').textContent = registrosHoy;
                 document.getElementById('totalCount').textContent = totalRegistros;
+            });
+        }
+
+        function descargarRegistrosComoExcel() {
+            const dbRef = ref(database, 'registros/');
+            onValue(dbRef, (snapshot) => {
+                const registros = snapshot.val();
+                if (!registros) {
+                    alert("No hay registros para descargar.");
+                    return;
+                }
+
+                const datos = Object.values(registros).map(registro => ({
+                    Cédula: registro.cedula,
+                    Nombre: registro.nombre,
+                    Teléfono: registro.telefono,
+                    Municipio: registro.municipio,
+                    Dirección: registro.direccion,
+                    Sexo: registro.sexo,
+                    Edad: registro.edad,
+                    Líder: registro.lider,
+                    Nota: registro.nota,
+                    Fecha: new Date(registro.fecha).toLocaleString()
+                }));
+
+                const ws = XLSX.utils.json_to_sheet(datos);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Registros");
+                XLSX.writeFile(wb, "registros.xlsx");
             });
         }
 
@@ -239,11 +264,11 @@
             <label for="edad">Edad</label>
             <input type="number" id="edad" placeholder="Ingrese la edad">
 
-            <label for="nota">Nota</label>
-            <input type="text" id="nota" placeholder="Ingrese una nota opcional">
-
             <label for="lider">Líder que registra</label>
             <input type="text" id="lider" placeholder="Nombre del líder">
+
+            <label for="nota">Nota</label>
+            <input type="text" id="nota" placeholder="Ingrese una nota opcional">
 
             <button type="submit">Registrar</button>
         </form>
@@ -266,7 +291,6 @@
         document.getElementById('voterForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
-            // Recoger datos del formulario
             const registro = {
                 cedula: document.getElementById('cedula').value,
                 nombre: document.getElementById('nombre').value,
@@ -275,14 +299,11 @@
                 direccion: document.getElementById('direccion').value,
                 sexo: document.getElementById('sexo').value,
                 edad: document.getElementById('edad').value,
-                nota: document.getElementById('nota').value,
                 lider: document.getElementById('lider').value,
+                nota: document.getElementById('nota').value,
                 fecha: new Date().toISOString()
             };
 
-            console.log("Formulario enviado: ", registro);
-
-            // Guardar en Firebase
             guardarRegistroEnFirebase(registro)
                 .then(() => {
                     document.getElementById('successMessage').style.display = 'block';
@@ -309,19 +330,7 @@
             }
         });
 
-        document.getElementById('downloadButton').addEventListener('click', function() {
-            alert("Funcionalidad de descarga en proceso de implementación.");
-        });
+        document.getElementById('downloadButton').addEventListener('click', descargarRegistrosComoExcel);
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
