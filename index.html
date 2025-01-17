@@ -3,16 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta property="og:title" content="Registro de Votantes Oficina - Nariño">
-    <meta property="og:description" content="Formulario de registro para la campaña en Nariño">
     <title>Registro de Votantes Oficina - Nariño</title>
-
-    <!-- Scripts de Firebase -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
-        import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
-        import { writeFile } from "https://cdn.jsdelivr.net/npm/xlsx/xlsx.mjs";
+        import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
 
+        // Configuración de Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyBhtFQywau5AqV84SxWiyDXcak5oWG5NBg",
             authDomain: "formulario-oficina-votantes.firebaseapp.com",
@@ -23,16 +19,19 @@
             measurementId: "G-318KXX95NN"
         };
 
+        // Inicializar Firebase
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
 
+        // Guardar un registro en Firebase
         function guardarRegistroEnFirebase(registro) {
-            const dbRef = ref(database, 'registros/');
+            const dbRef = ref(database, "registros/");
             return push(dbRef, registro);
         }
 
+        // Actualizar contadores de registros
         function actualizarContadores() {
-            const dbRef = ref(database, 'registros/');
+            const dbRef = ref(database, "registros/");
             onValue(dbRef, (snapshot) => {
                 const registros = snapshot.val();
                 const hoy = new Date().toLocaleDateString();
@@ -47,290 +46,111 @@
                     }).length;
                 }
 
-                document.getElementById('todayCount').textContent = registrosHoy;
-                document.getElementById('totalCount').textContent = totalRegistros;
+                document.getElementById("todayCount").textContent = registrosHoy;
+                document.getElementById("totalCount").textContent = totalRegistros;
             });
         }
 
-        function descargarRegistrosComoExcel() {
-            const dbRef = ref(database, 'registros/');
-            onValue(dbRef, (snapshot) => {
-                const registros = snapshot.val();
-                if (!registros) {
-                    alert("No hay registros para descargar.");
-                    return;
-                }
-
-                const datos = Object.values(registros).map(registro => ({
-                    Cédula: registro.cedula,
-                    Nombre: registro.nombre,
-                    Teléfono: registro.telefono,
-                    Municipio: registro.municipio,
-                    Dirección: registro.direccion,
-                    Sexo: registro.sexo,
-                    Edad: registro.edad,
-                    Líder: registro.lider,
-                    Nota: registro.nota,
-                    Fecha: new Date(registro.fecha).toLocaleString()
-                }));
-
-                const ws = XLSX.utils.json_to_sheet(datos);
-                const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, "Registros");
-                XLSX.writeFile(wb, "registros.xlsx");
-            });
-        }
-
+        // Inicializar contadores
         actualizarContadores();
-    </script>
 
+        // Manejar envío del formulario
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("voterForm").addEventListener("submit", (e) => {
+                e.preventDefault();
+
+                const registro = {
+                    cedula: document.getElementById("cedula").value,
+                    nombre: document.getElementById("nombre").value,
+                    telefono: document.getElementById("telefono").value,
+                    municipio: document.getElementById("municipio").value,
+                    direccion: document.getElementById("direccion").value,
+                    sexo: document.getElementById("sexo").value,
+                    edad: document.getElementById("edad").value,
+                    lider: document.getElementById("lider").value,
+                    nota: document.getElementById("nota").value,
+                    fecha: new Date().toISOString(),
+                };
+
+                guardarRegistroEnFirebase(registro)
+                    .then(() => {
+                        document.getElementById("successMessage").style.display = "block";
+                        document.getElementById("errorMessage").style.display = "none";
+                        document.getElementById("voterForm").reset();
+                    })
+                    .catch((error) => {
+                        document.getElementById("errorMessage").textContent = "Error: " + error.message;
+                        document.getElementById("errorMessage").style.display = "block";
+                        document.getElementById("successMessage").style.display = "none";
+                    });
+            });
+        });
+    </script>
     <style>
-        /* Estilos del formulario */
+        /* Estilo básico para el formulario */
         body {
             font-family: Arial, sans-serif;
             background-color: #f8f9fa;
             margin: 0;
-            padding: 0;
+            padding: 20px;
         }
-
         .container {
             max-width: 600px;
-            margin: 20px auto;
+            margin: 0 auto;
             padding: 20px;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            text-align: center;
-            color: #007bff;
-        }
-
-        label {
-            display: block;
-            font-weight: bold;
-            margin: 10px 0 5px;
-        }
-
-        input, select, button {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
+            background-color: white;
             border-radius: 5px;
-            border: 1px solid #ccc;
-            font-size: 16px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-
-        button {
-            background-color: #007bff;
-            color: white;
-            cursor: pointer;
-            border: none;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        .button-container {
-            display: flex;
-            gap: 10px;
-        }
-
         .success-message, .error-message {
             display: none;
             padding: 10px;
-            border-radius: 5px;
-            text-align: center;
             margin-top: 10px;
+            border-radius: 5px;
         }
-
         .success-message {
             background-color: #d4edda;
             color: #155724;
         }
-
         .error-message {
             background-color: #f8d7da;
             color: #721c24;
-        }
-
-        .stat-container {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #e8f0fe;
-            border-radius: 5px;
-        }
-
-        .stat-container p {
-            margin: 5px 0;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Registro de Votantes Oficina - Nariño</h1>
+        <h1>Registro de Votantes</h1>
         <form id="voterForm">
             <label for="cedula">Cédula</label>
-            <input type="number" id="cedula" placeholder="Ingrese el número de cédula">
-
+            <input type="text" id="cedula" placeholder="Ingrese la cédula">
             <label for="nombre">Nombre Completo</label>
             <input type="text" id="nombre" placeholder="Ingrese el nombre completo">
-
             <label for="telefono">Teléfono</label>
-            <input type="tel" id="telefono" placeholder="Ingrese el número de teléfono">
-
+            <input type="text" id="telefono" placeholder="Ingrese el teléfono">
             <label for="municipio">Municipio</label>
-            <select id="municipio">
-                <option value="">Seleccione un municipio</option>
-                <option value="Albán">Albán</option>
-                <option value="Aldana">Aldana</option>
-                <option value="Ancuyá">Ancuyá</option>
-                <option value="Arboleda">Arboleda</option>
-                <option value="Barbacoas">Barbacoas</option>
-                <option value="Belén">Belén</option>
-                <option value="Buesaco">Buesaco</option>
-                <option value="Chachagüí">Chachagüí</option>
-                <option value="Colón">Colón</option>
-                <option value="Consacá">Consacá</option>
-                <option value="Contadero">Contadero</option>
-                <option value="Córdoba">Córdoba</option>
-                <option value="Cuaspud">Cuaspud</option>
-                <option value="Cumbal">Cumbal</option>
-                <option value="Cumbitara">Cumbitara</option>
-                <option value="El Charco">El Charco</option>
-                <option value="El Peñol">El Peñol</option>
-                <option value="El Rosario">El Rosario</option>
-                <option value="El Tablón de Gómez">El Tablón de Gómez</option>
-                <option value="El Tambo">El Tambo</option>
-                <option value="Francisco Pizarro">Francisco Pizarro</option>
-                <option value="Funes">Funes</option>
-                <option value="Guachucal">Guachucal</option>
-                <option value="Guaitarilla">Guaitarilla</option>
-                <option value="Gualmatán">Gualmatán</option>
-                <option value="Iles">Iles</option>
-                <option value="Imués">Imués</option>
-                <option value="Ipiales">Ipiales</option>
-                <option value="La Cruz">La Cruz</option>
-                <option value="La Florida">La Florida</option>
-                <option value="La Llanada">La Llanada</option>
-                <option value="La Tola">La Tola</option>
-                <option value="La Unión">La Unión</option>
-                <option value="Leiva">Leiva</option>
-                <option value="Linares">Linares</option>
-                <option value="Los Andes">Los Andes</option>
-                <option value="Magüí Payán">Magüí Payán</option>
-                <option value="Mallama">Mallama</option>
-                <option value="Mosquera">Mosquera</option>
-                <option value="Nariño">Nariño</option>
-                <option value="Olaya Herrera">Olaya Herrera</option>
-                <option value="Ospina">Ospina</option>
-                <option value="Pasto">Pasto</option>
-                <option value="Policarpa">Policarpa</option>
-                <option value="Potosí">Potosí</option>
-                <option value="Providencia">Providencia</option>
-                <option value="Puerres">Puerres</option>
-                <option value="Pupiales">Pupiales</option>
-                <option value="Ricaurte">Ricaurte</option>
-                <option value="Roberto Payán">Roberto Payán</option>
-                <option value="Samaniego">Samaniego</option>
-                <option value="San Bernardo">San Bernardo</option>
-                <option value="San Lorenzo">San Lorenzo</option>
-                <option value="San Pablo">San Pablo</option>
-                <option value="San Pedro de Cartago">San Pedro de Cartago</option>
-                <option value="Sandoná">Sandoná</option>
-                <option value="Santa Bárbara">Santa Bárbara</option>
-                <option value="Santacruz">Santacruz</option>
-                <option value="Sapuyes">Sapuyes</option>
-                <option value="Taminango">Taminango</option>
-                <option value="Tangua">Tangua</option>
-                <option value="Tumaco">Tumaco</option>
-                <option value="Túquerres">Túquerres</option>
-                <option value="Yacuanquer">Yacuanquer</option>
-            </select>
-
+            <input type="text" id="municipio" placeholder="Ingrese el municipio">
             <label for="direccion">Dirección</label>
             <input type="text" id="direccion" placeholder="Ingrese la dirección">
-
             <label for="sexo">Sexo</label>
             <select id="sexo">
-                <option value="">Seleccione el sexo</option>
+                <option value="">Seleccione</option>
                 <option value="Masculino">Masculino</option>
                 <option value="Femenino">Femenino</option>
-                <option value="Otro">Otro</option>
             </select>
-
             <label for="edad">Edad</label>
             <input type="number" id="edad" placeholder="Ingrese la edad">
-
             <label for="lider">Líder que registra</label>
-            <input type="text" id="lider" placeholder="Nombre del líder">
-
+            <input type="text" id="lider" placeholder="Ingrese el líder">
             <label for="nota">Nota</label>
-            <input type="text" id="nota" placeholder="Ingrese una nota opcional">
-
+            <input type="text" id="nota" placeholder="Ingrese una nota">
             <button type="submit">Registrar</button>
         </form>
-
-        <div class="success-message" id="successMessage">¡Registro guardado exitosamente!</div>
-        <div class="error-message" id="errorMessage">Error al guardar el registro.</div>
-
-        <div class="stat-container">
-            <p>Total registros hoy: <span id="todayCount">0</span></p>
-            <p>Total registros: <span id="totalCount">0</span></p>
-        </div>
-
-        <div class="button-container">
-            <button id="downloadButton" style="background-color: #34a853;">Descargar Excel</button>
-            <button id="deleteButton" style="background-color: #dc3545;">Eliminar Registros</button>
-        </div>
+        <div id="successMessage" class="success-message">¡Registro exitoso!</div>
+        <div id="errorMessage" class="error-message"></div>
+        <p>Total registros hoy: <span id="todayCount">0</span></p>
+        <p>Total registros: <span id="totalCount">0</span></p>
     </div>
-
-    <script>
-        document.getElementById('voterForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const registro = {
-                cedula: document.getElementById('cedula').value,
-                nombre: document.getElementById('nombre').value,
-                telefono: document.getElementById('telefono').value,
-                municipio: document.getElementById('municipio').value,
-                direccion: document.getElementById('direccion').value,
-                sexo: document.getElementById('sexo').value,
-                edad: document.getElementById('edad').value,
-                lider: document.getElementById('lider').value,
-                nota: document.getElementById('nota').value,
-                fecha: new Date().toISOString()
-            };
-
-            guardarRegistroEnFirebase(registro)
-                .then(() => {
-                    document.getElementById('successMessage').style.display = 'block';
-                    document.getElementById('errorMessage').style.display = 'none';
-                    document.getElementById('voterForm').reset();
-                })
-                .catch((error) => {
-                    document.getElementById('errorMessage').textContent = 'Error: ' + error.message;
-                    document.getElementById('errorMessage').style.display = 'block';
-                    document.getElementById('successMessage').style.display = 'none';
-                });
-        });
-
-        document.getElementById('deleteButton').addEventListener('click', function() {
-            if (confirm("¿Estás seguro de que deseas eliminar todos los registros? Esta acción no se puede deshacer.")) {
-                const dbRef = ref(database, 'registros/');
-                remove(dbRef)
-                    .then(() => {
-                        alert("Todos los registros han sido eliminados correctamente.");
-                    })
-                    .catch((error) => {
-                        alert("Error al eliminar los registros: " + error.message);
-                    });
-            }
-        });
-
-        document.getElementById('downloadButton').addEventListener('click', descargarRegistrosComoExcel);
-    </script>
 </body>
 </html>
+
