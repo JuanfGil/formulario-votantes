@@ -11,7 +11,7 @@
     <script type="module">
         // Importar las funciones necesarias desde los SDKs de Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
-        import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
+        import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
 
         // Configuración de tu aplicación Firebase
         const firebaseConfig = {
@@ -33,6 +33,30 @@
             const dbRef = ref(database, 'registros/');
             return push(dbRef, registro);
         }
+
+        // Actualizar contadores de registros
+        function actualizarContadores() {
+            const dbRef = ref(database, 'registros/');
+            onValue(dbRef, (snapshot) => {
+                const registros = snapshot.val();
+                const hoy = new Date().toLocaleDateString();
+                let totalRegistros = 0;
+                let registrosHoy = 0;
+
+                if (registros) {
+                    totalRegistros = Object.keys(registros).length;
+                    registrosHoy = Object.values(registros).filter(registro => {
+                        const fechaRegistro = new Date(registro.fecha).toLocaleDateString();
+                        return fechaRegistro === hoy;
+                    }).length;
+                }
+
+                document.getElementById('todayCount').textContent = registrosHoy;
+                document.getElementById('totalCount').textContent = totalRegistros;
+            });
+        }
+
+        actualizarContadores();
     </script>
 
     <style>
@@ -105,6 +129,17 @@
         .error-message {
             background-color: #f8d7da;
             color: #721c24;
+        }
+
+        .stat-container {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8f0fe;
+            border-radius: 5px;
+        }
+
+        .stat-container p {
+            margin: 5px 0;
         }
     </style>
 </head>
@@ -213,6 +248,11 @@
         <div class="success-message" id="successMessage">¡Registro guardado exitosamente!</div>
         <div class="error-message" id="errorMessage">Error al guardar el registro.</div>
 
+        <div class="stat-container">
+            <p>Total registros hoy: <span id="todayCount">0</span></p>
+            <p>Total registros: <span id="totalCount">0</span></p>
+        </div>
+
         <div class="button-container">
             <button id="downloadButton" style="background-color: #34a853;">Descargar Excel</button>
             <button id="deleteButton" style="background-color: #dc3545;">Eliminar Registros</button>
@@ -253,11 +293,9 @@
         document.getElementById('deleteButton').addEventListener('click', function() {
             if (confirm("¿Estás seguro de que deseas eliminar todos los registros? Esta acción no se puede deshacer.")) {
                 const dbRef = ref(database, 'registros/');
-                dbRef.remove()
+                remove(dbRef)
                     .then(() => {
                         alert("Todos los registros han sido eliminados correctamente.");
-                        document.getElementById('successMessage').style.display = 'none';
-                        document.getElementById('errorMessage').style.display = 'none';
                     })
                     .catch((error) => {
                         alert("Error al eliminar los registros: " + error.message);
@@ -271,6 +309,7 @@
     </script>
 </body>
 </html>
+
 
 
 
