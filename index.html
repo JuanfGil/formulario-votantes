@@ -7,89 +7,7 @@
     <meta property="og:description" content="Formulario de registro para la campaña en Nariño">
     <title>Registro de Votantes Oficina - Nariño</title>
 
-    <!-- Scripts de Firebase -->
-    <script type="module">
-        // Importar las funciones necesarias desde los SDKs de Firebase
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
-        import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
-        import { writeFile, utils } from "https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js";
-
-        // Configuración de tu aplicación Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyBhtFQywau5AqV84SxWiyDXcak5oWG5NBg",
-            authDomain: "formulario-oficina-votantes.firebaseapp.com",
-            projectId: "formulario-oficina-votantes",
-            storageBucket: "formulario-oficina-votantes.appspot.com",
-            messagingSenderId: "191119830864",
-            appId: "1:191119830864:web:79008c3e5930ce23c08655",
-            measurementId: "G-318KXX95NN"
-        };
-
-        // Inicializar Firebase
-        const app = initializeApp(firebaseConfig);
-        const database = getDatabase(app);
-
-        // Función para guardar datos en Firebase
-        function guardarRegistroEnFirebase(registro) {
-            const dbRef = ref(database, 'registros/');
-            return push(dbRef, registro);
-        }
-
-        // Actualizar contadores de registros
-        function actualizarContadores() {
-            const dbRef = ref(database, 'registros/');
-            onValue(dbRef, (snapshot) => {
-                const registros = snapshot.val();
-                const hoy = new Date().toLocaleDateString();
-                let totalRegistros = 0;
-                let registrosHoy = 0;
-
-                if (registros) {
-                    totalRegistros = Object.keys(registros).length;
-                    registrosHoy = Object.values(registros).filter(registro => {
-                        const fechaRegistro = new Date(registro.fecha).toLocaleDateString();
-                        return fechaRegistro === hoy;
-                    }).length;
-                }
-
-                document.getElementById('todayCount').textContent = registrosHoy;
-                document.getElementById('totalCount').textContent = totalRegistros;
-            });
-        }
-
-        actualizarContadores();
-
-        // Descargar registros como Excel
-        function descargarRegistrosComoExcel() {
-            const dbRef = ref(database, 'registros/');
-            onValue(dbRef, (snapshot) => {
-                const registros = snapshot.val();
-                if (!registros) {
-                    alert("No hay registros para descargar.");
-                    return;
-                }
-
-                const datos = Object.values(registros).map(registro => ({
-                    Cédula: registro.cedula || "",
-                    Nombre: registro.nombre || "",
-                    Teléfono: registro.telefono || "",
-                    Municipio: registro.municipio || "",
-                    Dirección: registro.direccion || "",
-                    Sexo: registro.sexo || "",
-                    Edad: registro.edad || "",
-                    Nota: registro.nota || "",
-                    Líder: registro.lider || "",
-                    Fecha: new Date(registro.fecha).toLocaleString()
-                }));
-
-                const ws = utils.json_to_sheet(datos);
-                const wb = utils.book_new();
-                utils.book_append_sheet(wb, ws, "Registros");
-
-                writeFile(wb, "Registros.xlsx");
-            });
-        }
-    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <style>
         /* Estilos del formulario */
@@ -295,10 +213,11 @@
     </div>
 
     <script>
+        let registros = [];
+
         document.getElementById('voterForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
-            // Recoger datos del formulario
             const registro = {
                 cedula: document.getElementById('cedula').value,
                 nombre: document.getElementById('nombre').value,
@@ -312,35 +231,59 @@
                 fecha: new Date().toISOString()
             };
 
-            guardarRegistroEnFirebase(registro)
-                .then(() => {
-                    document.getElementById('successMessage').style.display = 'block';
-                    document.getElementById('errorMessage').style.display = 'none';
-                    document.getElementById('voterForm').reset();
-                    actualizarContadores();
-                })
-                .catch((error) => {
-                    document.getElementById('errorMessage').textContent = 'Error: ' + error.message;
-                    document.getElementById('errorMessage').style.display = 'block';
-                    document.getElementById('successMessage').style.display = 'none';
-                });
+            registros.push(registro);
+            actualizarContadores();
+
+            document.getElementById('successMessage').style.display = 'block';
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('voterForm').reset();
+
+            setTimeout(() => {
+                document.getElementById('successMessage').style.display = 'none';
+            }, 3000);
+        });
+
+        function actualizarContadores() {
+            const hoy = new Date().toLocaleDateString();
+            const registrosHoy = registros.filter(r => new Date(r.fecha).toLocaleDateString() === hoy).length;
+
+            document.getElementById('todayCount').textContent = registrosHoy;
+            document.getElementById('totalCount').textContent = registros.length;
+        }
+
+        document.getElementById('downloadButton').addEventListener('click', function() {
+            if (registros.length === 0) {
+                alert("No hay registros para descargar.");
+                return;
+            }
+
+            const ws = XLSX.utils.json_to_sheet(registros.map(r => ({
+                Cédula: r.cedula,
+                Nombre: r.nombre,
+                Teléfono: r.telefono,
+                Municipio: r.municipio,
+                Dirección: r.direccion,
+                Sexo: r.sexo,
+                Edad: r.edad,
+                Nota: r.nota,
+                Líder: r.lider,
+                Fecha: new Date(r.fecha).toLocaleString()
+            })));
+
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Registros");
+
+            XLSX.writeFile(wb, "Registros.xlsx");
         });
 
         document.getElementById('deleteButton').addEventListener('click', function() {
             if (confirm("¿Estás seguro de que deseas eliminar todos los registros? Esta acción no se puede deshacer.")) {
-                const dbRef = ref(database, 'registros/');
-                remove(dbRef)
-                    .then(() => {
-                        alert("Todos los registros han sido eliminados correctamente.");
-                        actualizarContadores();
-                    })
-                    .catch((error) => {
-                        alert("Error al eliminar los registros: " + error.message);
-                    });
+                registros = [];
+                actualizarContadores();
+                alert("Todos los registros han sido eliminados correctamente.");
             }
         });
-
-        document.getElementById('downloadButton').addEventListener('click', descargarRegistrosComoExcel);
     </script>
 </body>
 </html>
+
