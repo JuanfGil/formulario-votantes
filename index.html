@@ -239,11 +239,11 @@
             <label for="edad">Edad</label>
             <input type="number" id="edad" placeholder="Ingrese la edad">
 
-            <label for="lider">Líder que registra</label>
-            <input type="text" id="lider" placeholder="Nombre del líder">
-
             <label for="nota">Nota</label>
             <input type="text" id="nota" placeholder="Ingrese una nota opcional">
+
+            <label for="lider">Líder que registra</label>
+            <input type="text" id="lider" placeholder="Nombre del líder">
 
             <button type="submit">Registrar</button>
         </form>
@@ -280,6 +280,8 @@
                 fecha: new Date().toISOString()
             };
 
+            console.log("Formulario enviado: ", registro);
+
             // Guardar en Firebase
             guardarRegistroEnFirebase(registro)
                 .then(() => {
@@ -313,6 +315,7 @@
     </script>
 </body>
 </html>
+
 
 
 
