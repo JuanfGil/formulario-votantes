@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulario de Registro de Votantes - Nariño</title>
+    <meta property="og:title" content="Registro de Votantes - Nariño">
+    <meta property="og:description" content="Formulario de registro para la campaña en Nariño">
+    <title>Registro de Votantes - Nariño</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -61,45 +65,194 @@
         .form-group label span {
             color: red;
         }
+
+        .button-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .success-message, .error-message {
+            display: none;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .stat-container {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8f0fe;
+            border-radius: 5px;
+        }
+
+        @media (max-width: 480px) {
+            .button-container {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Registro de Votantes - Nariño</h1>
-        <form action="#" method="post">
+        
+        <form id="voterForm">
             <div class="form-group">
-                <label for="cedula">Cédula <span>*</span></label>
-                <input type="text" id="cedula" name="cedula" placeholder="Ingrese el número de cédula" required>
+                <label for="cedula">Cédula *</label>
+                <input type="number" id="cedula" required placeholder="Ingrese el número de cédula">
             </div>
 
             <div class="form-group">
-                <label for="nombre">Nombre Completo <span>*</span></label>
-                <input type="text" id="nombre" name="nombre" placeholder="Ingrese el nombre completo" required>
+                <label for="nombre">Nombre Completo *</label>
+                <input type="text" id="nombre" required placeholder="Ingrese el nombre completo">
             </div>
 
             <div class="form-group">
-                <label for="telefono">Teléfono <span>*</span></label>
-                <input type="tel" id="telefono" name="telefono" placeholder="Ingrese el número de teléfono" required>
+                <label for="telefono">Teléfono *</label>
+                <input type="tel" id="telefono" required placeholder="Ingrese el número de teléfono">
             </div>
 
             <div class="form-group">
-                <label for="municipio">Municipio <span>*</span></label>
-                <select id="municipio" name="municipio" required>
+                <label for="municipio">Municipio *</label>
+                <div class="quick-select">
+                    <input type="text" id="municipioSearch" placeholder="Buscar municipio..." onkeyup="filtrarMunicipios()">
+                </div>
+                <select id="municipio" required>
                     <option value="">Seleccione un municipio</option>
-                    <option value="municipio1">Municipio 1</option>
-                    <option value="municipio2">Municipio 2</option>
-                    <option value="municipio3">Municipio 3</option>
-                    <!-- Agregar más municipios aquí -->
+                    <option value="Ipiales">Ipiales</option>
+                    <option value="Pasto">Pasto</option>
+                    <option value="Tumaco">Tumaco</option>
+                    <!-- Otros municipios aquí -->
                 </select>
             </div>
 
             <div class="form-group">
                 <label for="lider">Líder que registra</label>
-                <input type="text" id="lider" name="lider" placeholder="Nombre del líder">
+                <input type="text" id="lider" placeholder="Nombre del líder">
             </div>
 
-            <button type="submit">Registrar</button>
+            <div class="form-group">
+                <label for="notas">Notas</label>
+                <input type="text" id="notas" placeholder="Observaciones adicionales">
+            </div>
+
+            <button type="submit" id="submitButton">Registrar</button>
         </form>
+
+        <div id="successMessage" class="success-message">
+            ¡Registro guardado exitosamente!
+        </div>
+
+        <div id="errorMessage" class="error-message">
+            Error al guardar el registro.
+        </div>
+
+        <div class="stat-container">
+            <p>Total registros hoy: <span id="todayCount">0</span></p>
+            <p>Total registros: <span id="totalCount">0</span></p>
+        </div>
+
+        <div class="button-container">
+            <button id="downloadButton">Descargar Excel</button>
+        </div>
     </div>
+
+    <script>
+        function filtrarMunicipios() {
+            const input = document.getElementById('municipioSearch');
+            const filter = input.value.toLowerCase();
+            const select = document.getElementById('municipio');
+            const options = select.getElementsByTagName('option');
+
+            for (let i = 0; i < options.length; i++) {
+                const txtValue = options[i].text;
+                if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                    options[i].style.display = "";
+                } else {
+                    options[i].style.display = "none";
+                }
+            }
+        }
+
+        let registros = [];
+
+        if (localStorage.getItem('registros')) {
+            registros = JSON.parse(localStorage.getItem('registros'));
+            actualizarContadores();
+        }
+
+        function actualizarContadores() {
+            const hoy = new Date().toLocaleDateString();
+            const registrosHoy = registros.filter(r => new Date(r.fecha).toLocaleDateString() === hoy).length;
+            
+            document.getElementById('todayCount').textContent = registrosHoy;
+            document.getElementById('totalCount').textContent = registros.length;
+        }
+
+        document.getElementById('voterForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const cedula = document.getElementById('cedula').value;
+            
+            if (registros.some(r => r.cedula === cedula)) {
+                document.getElementById('errorMessage').textContent = 'Esta cédula ya está registrada';
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('successMessage').style.display = 'none';
+                return;
+            }
+
+            const registro = {
+                cedula: cedula,
+                nombre: document.getElementById('nombre').value,
+                telefono: document.getElementById('telefono').value,
+                municipio: document.getElementById('municipio').value,
+                lider: document.getElementById('lider').value,
+                notas: document.getElementById('notas').value,
+                fecha: new Date().toISOString()
+            };
+
+            registros.push(registro);
+            localStorage.setItem('registros', JSON.stringify(registros));
+            
+            actualizarContadores();
+
+            document.getElementById('successMessage').style.display = 'block';
+            document.getElementById('errorMessage').style.display = 'none';
+
+            this.reset();
+
+            setTimeout(() => {
+                document.getElementById('successMessage').style.display = 'none';
+            }, 3000);
+        });
+
+        document.getElementById('downloadButton').addEventListener('click', function() {
+            const wb = XLSX.utils.book_new();
+            const datos = registros.map(r => ({
+                'Cédula': r.cedula,
+                'Nombre': r.nombre,
+                'Teléfono': r.telefono,
+                'Municipio': r.municipio,
+                'Líder': r.lider,
+                'Notas': r.notas,
+                'Fecha': new Date(r.fecha).toLocaleString()
+            }));
+            const ws = XLSX.utils.json_to_sheet(datos);
+            XLSX.utils.book_append_sheet(wb, ws, "Registros");
+            XLSX.writeFile(wb, 'registros.xlsx');
+        });
+    </script>
 </body>
 </html>
+
