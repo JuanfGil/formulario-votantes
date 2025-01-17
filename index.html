@@ -272,8 +272,16 @@
 
         document.getElementById('voterForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            const cedula = document.getElementById('cedula').value;
+            if (registros.some(r => r.cedula === cedula)) {
+                document.getElementById('errorMessage').textContent = 'Esta persona ya fue registrada';
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('successMessage').style.display = 'none';
+                return;
+            }
+
             const registro = {
-                cedula: document.getElementById('cedula').value,
+                cedula: cedula,
                 nombre: document.getElementById('nombre').value,
                 telefono: document.getElementById('telefono').value,
                 municipio: document.getElementById('municipio').value,
@@ -290,6 +298,12 @@
             actualizarContadores();
 
             document.getElementById('successMessage').style.display = 'block';
+            document.getElementById('errorMessage').style.display = 'none';
+
+            // Limpiar el formulario
+            document.getElementById('voterForm').reset();
+            document.getElementById('otroSexo').style.display = 'none';
+
             setTimeout(() => {
                 document.getElementById('successMessage').style.display = 'none';
             }, 3000);
@@ -317,6 +331,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
