@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Registro de Votantes - Nariño</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #007bff;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+        }
+
+        button {
+            width: 100%;
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label span {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Registro de Votantes - Nariño</h1>
+        <form action="#" method="post">
+            <div class="form-group">
+                <label for="cedula">Cédula <span>*</span></label>
+                <input type="text" id="cedula" name="cedula" placeholder="Ingrese el número de cédula" required>
+            </div>
+
+            <div class="form-group">
+                <label for="nombre">Nombre Completo <span>*</span></label>
+                <input type="text" id="nombre" name="nombre" placeholder="Ingrese el nombre completo" required>
+            </div>
+
+            <div class="form-group">
+                <label for="telefono">Teléfono <span>*</span></label>
+                <input type="tel" id="telefono" name="telefono" placeholder="Ingrese el número de teléfono" required>
+            </div>
+
+            <div class="form-group">
+                <label for="municipio">Municipio <span>*</span></label>
+                <select id="municipio" name="municipio" required>
+                    <option value="">Seleccione un municipio</option>
+                    <option value="municipio1">Municipio 1</option>
+                    <option value="municipio2">Municipio 2</option>
+                    <option value="municipio3">Municipio 3</option>
+                    <!-- Agregar más municipios aquí -->
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="lider">Líder que registra</label>
+                <input type="text" id="lider" name="lider" placeholder="Nombre del líder">
+            </div>
+
+            <button type="submit">Registrar</button>
+        </form>
+    </div>
+</body>
+</html>
