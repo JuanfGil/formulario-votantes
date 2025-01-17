@@ -189,17 +189,17 @@
             <label for="edad">Edad</label>
             <input type="number" id="edad" placeholder="Ingrese la edad">
 
-            <label for="lider">Líder que registra</label>
-            <input type="text" id="lider" placeholder="Nombre del líder">
-
             <label for="nota">Nota</label>
             <input type="text" id="nota" placeholder="Ingrese una nota opcional">
+
+            <label for="lider">Líder que registra</label>
+            <input type="text" id="lider" placeholder="Nombre del líder">
 
             <button type="submit">Registrar</button>
         </form>
 
-        <div class="success-message" id="successMessage">¡Registro guardado exitosamente!</div>
-        <div class="error-message" id="errorMessage">Error al guardar el registro.</div>
+        <div id="successMessage" style="display:none;color:green;">¡Registro guardado exitosamente!</div>
+        <div id="errorMessage" style="display:none;color:red;">Error al guardar el registro.</div>
 
         <div class="stat-container">
             <p>Total registros hoy: <span id="todayCount">0</span></p>
@@ -213,7 +213,7 @@
     </div>
 
     <script>
-        let registros = [];
+        const scriptURL = "https://script.google.com/macros/s/AKfycbwV0IaWOhJKM68zHoKYfObWG14RfhGsmzS7fdR-8HxmgVpuP3VKaTvNuXo2ApXRqxloxg/exec";
 
         document.getElementById('voterForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -227,29 +227,28 @@
                 sexo: document.getElementById('sexo').value,
                 edad: document.getElementById('edad').value,
                 nota: document.getElementById('nota').value,
-                lider: document.getElementById('lider').value,
-                fecha: new Date().toISOString()
+                lider: document.getElementById('lider').value
             };
 
-            registros.push(registro);
-            actualizarContadores();
-
-            document.getElementById('successMessage').style.display = 'block';
-            document.getElementById('errorMessage').style.display = 'none';
-            document.getElementById('voterForm').reset();
-
-            setTimeout(() => {
-                document.getElementById('successMessage').style.display = 'none';
-            }, 3000);
+            fetch(scriptURL, {
+                method: 'POST',
+                body: JSON.stringify(registro),
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(response => {
+                if (response.ok) {
+                    document.getElementById('successMessage').style.display = 'block';
+                    setTimeout(() => document.getElementById('successMessage').style.display = 'none', 3000);
+                    document.getElementById('voterForm').reset();
+                } else {
+                    document.getElementById('errorMessage').style.display = 'block';
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                document.getElementById('errorMessage').style.display = 'block';
+            });
         });
-
-        function actualizarContadores() {
-            const hoy = new Date().toLocaleDateString();
-            const registrosHoy = registros.filter(r => new Date(r.fecha).toLocaleDateString() === hoy).length;
-
-            document.getElementById('todayCount').textContent = registrosHoy;
-            document.getElementById('totalCount').textContent = registros.length;
-        }
 
         document.getElementById('downloadButton').addEventListener('click', function() {
             if (registros.length === 0) {
@@ -283,7 +282,16 @@
                 alert("Todos los registros han sido eliminados correctamente.");
             }
         });
+
+        let registros = [];
+
+        function actualizarContadores() {
+            const hoy = new Date().toLocaleDateString();
+            const registrosHoy = registros.filter(r => new Date(r.fecha).toLocaleDateString() === hoy).length;
+
+            document.getElementById('todayCount').textContent = registrosHoy;
+            document.getElementById('totalCount').textContent = registros.length;
+        }
     </script>
 </body>
 </html>
-
