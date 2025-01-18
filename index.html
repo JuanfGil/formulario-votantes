@@ -215,16 +215,35 @@
         document.getElementById('voterForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
+            const cedula = document.getElementById('cedula').value.trim();
+            const nombre = document.getElementById('nombre').value.trim();
+            const telefono = document.getElementById('telefono').value.trim();
+            const municipio = document.getElementById('municipio').value.trim();
+            const direccion = document.getElementById('direccion').value.trim();
+            const sexo = document.getElementById('sexo').value.trim();
+            const edad = document.getElementById('edad').value.trim();
+            const lider = document.getElementById('lider').value.trim();
+            const nota = document.getElementById('nota').value.trim();
+
+            if (!cedula && !nombre && !telefono && !municipio && !direccion && !sexo && !edad && !lider && !nota) {
+                document.getElementById('errorMessage').textContent = 'No se puede registrar porque los campos están vacíos.';
+                document.getElementById('errorMessage').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('errorMessage').style.display = 'none';
+                }, 3000);
+                return;
+            }
+
             const registro = {
-                cedula: document.getElementById('cedula').value.trim(),
-                nombre: document.getElementById('nombre').value.trim(),
-                telefono: document.getElementById('telefono').value.trim(),
-                municipio: document.getElementById('municipio').value.trim(),
-                direccion: document.getElementById('direccion').value.trim(),
-                sexo: document.getElementById('sexo').value.trim(),
-                edad: document.getElementById('edad').value.trim(),
-                lider: document.getElementById('lider').value.trim(),
-                nota: document.getElementById('nota').value.trim()
+                cedula,
+                nombre,
+                telefono,
+                municipio,
+                direccion,
+                sexo,
+                edad,
+                lider,
+                nota
             };
 
             console.log("Datos a registrar:", registro);
