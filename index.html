@@ -212,8 +212,6 @@
     </div>
 
     <script>
-        const scriptURL = "https://script.google.com/macros/s/AKfycbwV0IaWOhJKM68zHoKYfObWG14RfhGsmzS7fdR-8HxmgVpuP3VKaTvNuXo2ApXRqxloxg/exec";
-
         document.getElementById('voterForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -229,44 +227,21 @@
                 nota: document.getElementById('nota').value.trim()
             };
 
-            console.log("Datos a enviar:", registro);
+            console.log("Datos a registrar:", registro);
 
-            const submitButton = document.querySelector('button[type="submit"]');
-            submitButton.disabled = true;
-            submitButton.textContent = "Enviando...";
-
-            fetch(scriptURL, {
-                method: 'POST',
-                body: JSON.stringify(registro),
-                headers: { 'Content-Type': 'application/json' }
-            })
-            .then(response => {
-                console.log("Respuesta del servidor:", response);
-                return response.json();
-            })
-            .then(data => {
-                if (data.result === 'success') {
-                    console.log("Registro guardado exitosamente");
-                    document.getElementById('successMessage').style.display = 'block';
-                    setTimeout(() => {
-                        document.getElementById('successMessage').style.display = 'none';
-                    }, 3000);
-                    document.getElementById('voterForm').reset();
-                } else {
-                    console.error("Error en la respuesta del servidor:", data);
-                    document.getElementById('errorMessage').textContent = data.message || 'Error al guardar el registro.';
-                    document.getElementById('errorMessage').style.display = 'block';
-                }
-            })
-            .catch(error => {
-                console.error("Error al conectar con el servidor:", error);
-                document.getElementById('errorMessage').textContent = 'Error al conectar con el servidor.';
-                document.getElementById('errorMessage').style.display = 'block';
-            })
-            .finally(() => {
-                submitButton.disabled = false;
-                submitButton.textContent = "Registrar";
+            // Simulación de guardado local (puedes reemplazar con tu lógica personalizada)
+            registros.push({
+                ...registro,
+                fecha: new Date().toISOString()
             });
+
+            document.getElementById('successMessage').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('successMessage').style.display = 'none';
+            }, 3000);
+
+            document.getElementById('voterForm').reset();
+            actualizarContadores();
         });
 
         document.getElementById('downloadButton').addEventListener('click', function() {
