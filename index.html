@@ -218,37 +218,54 @@
             e.preventDefault();
 
             const registro = {
-                cedula: document.getElementById('cedula').value,
-                nombre: document.getElementById('nombre').value,
-                telefono: document.getElementById('telefono').value,
-                municipio: document.getElementById('municipio').value,
-                direccion: document.getElementById('direccion').value,
-                sexo: document.getElementById('sexo').value,
-                edad: document.getElementById('edad').value,
-                lider: document.getElementById('lider').value,
-                nota: document.getElementById('nota').value
+                cedula: document.getElementById('cedula').value.trim(),
+                nombre: document.getElementById('nombre').value.trim(),
+                telefono: document.getElementById('telefono').value.trim(),
+                municipio: document.getElementById('municipio').value.trim(),
+                direccion: document.getElementById('direccion').value.trim(),
+                sexo: document.getElementById('sexo').value.trim(),
+                edad: document.getElementById('edad').value.trim(),
+                lider: document.getElementById('lider').value.trim(),
+                nota: document.getElementById('nota').value.trim()
             };
+
+            console.log("Datos a enviar:", registro);
+
+            const submitButton = document.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.textContent = "Enviando...";
 
             fetch(scriptURL, {
                 method: 'POST',
                 body: JSON.stringify(registro),
                 headers: { 'Content-Type': 'application/json' }
             })
-            .then(response => response.json())
+            .then(response => {
+                console.log("Respuesta del servidor:", response);
+                return response.json();
+            })
             .then(data => {
                 if (data.result === 'success') {
+                    console.log("Registro guardado exitosamente");
                     document.getElementById('successMessage').style.display = 'block';
-                    setTimeout(() => document.getElementById('successMessage').style.display = 'none', 3000);
+                    setTimeout(() => {
+                        document.getElementById('successMessage').style.display = 'none';
+                    }, 3000);
                     document.getElementById('voterForm').reset();
                 } else {
+                    console.error("Error en la respuesta del servidor:", data);
                     document.getElementById('errorMessage').textContent = data.message || 'Error al guardar el registro.';
                     document.getElementById('errorMessage').style.display = 'block';
                 }
             })
             .catch(error => {
-                console.error("Error:", error);
+                console.error("Error al conectar con el servidor:", error);
                 document.getElementById('errorMessage').textContent = 'Error al conectar con el servidor.';
                 document.getElementById('errorMessage').style.display = 'block';
+            })
+            .finally(() => {
+                submitButton.disabled = false;
+                submitButton.textContent = "Registrar";
             });
         });
 
@@ -259,16 +276,16 @@
             }
 
             const ws = XLSX.utils.json_to_sheet(registros.map(r => ({
-                Cédula: r.cedula,
-                Nombre: r.nombre,
-                Teléfono: r.telefono,
-                Municipio: r.municipio,
-                Dirección: r.direccion,
-                Sexo: r.sexo,
-                Edad: r.edad,
-                Nota: r.nota,
-                Líder: r.lider,
-                Fecha: new Date(r.fecha).toLocaleString()
+                "Cédula": r.cedula,
+                "Nombre": r.nombre,
+                "Teléfono": r.telefono,
+                "Municipio": r.municipio,
+                "Dirección": r.direccion,
+                "Sexo": r.sexo,
+                "Edad": r.edad,
+                "Nota": r.nota,
+                "Líder": r.lider,
+                "Fecha": new Date(r.fecha).toLocaleString()
             })));
 
             const wb = XLSX.utils.book_new();
