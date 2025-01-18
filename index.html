@@ -234,17 +234,20 @@
                 body: JSON.stringify(registro),
                 headers: { 'Content-Type': 'application/json' }
             })
-            .then(response => {
-                if (response.ok) {
+            .then(response => response.json())
+            .then(data => {
+                if (data.result === 'success') {
                     document.getElementById('successMessage').style.display = 'block';
                     setTimeout(() => document.getElementById('successMessage').style.display = 'none', 3000);
                     document.getElementById('voterForm').reset();
                 } else {
+                    document.getElementById('errorMessage').textContent = data.message || 'Error al guardar el registro.';
                     document.getElementById('errorMessage').style.display = 'block';
                 }
             })
             .catch(error => {
                 console.error("Error:", error);
+                document.getElementById('errorMessage').textContent = 'Error al conectar con el servidor.';
                 document.getElementById('errorMessage').style.display = 'block';
             });
         });
