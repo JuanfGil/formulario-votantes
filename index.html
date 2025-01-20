@@ -177,9 +177,9 @@
             <label for="direccion">Dirección</label>
             <input type="text" id="direccion" placeholder="Ingrese la dirección">
 
-            <label for="sexo">Sexo</label>
-            <select id="sexo">
-                <option value="">Seleccione el sexo</option>
+            <label for="genero">Género</label>
+            <select id="genero">
+                <option value="">Seleccione el género</option>
                 <option value="Masculino">Masculino</option>
                 <option value="Femenino">Femenino</option>
                 <option value="Otro">Otro</option>
@@ -222,12 +222,12 @@
             const telefono = document.getElementById('telefono').value.trim();
             const municipio = document.getElementById('municipio').value.trim();
             const direccion = document.getElementById('direccion').value.trim();
-            const sexo = document.getElementById('sexo').value.trim();
+            const genero = document.getElementById('genero').value.trim();
             const edad = document.getElementById('edad').value.trim();
             const lider = document.getElementById('lider').value.trim();
             const nota = document.getElementById('nota').value.trim();
 
-            if (!cedula && !nombre && !telefono && !municipio && !direccion && !sexo && !edad && !lider && !nota) {
+            if (!cedula && !nombre && !telefono && !municipio && !direccion && !genero && !edad && !lider && !nota) {
                 document.getElementById('errorMessage').textContent = 'No se puede registrar porque los campos están vacíos.';
                 document.getElementById('errorMessage').style.display = 'block';
                 setTimeout(() => {
@@ -242,7 +242,7 @@
                 telefono,
                 municipio,
                 direccion,
-                sexo,
+                genero,
                 edad,
                 lider,
                 nota,
@@ -273,7 +273,7 @@
                 "Teléfono": r.telefono,
                 "Municipio": r.municipio,
                 "Dirección": r.direccion,
-                "Sexo": r.sexo,
+                "Género": r.genero,
                 "Edad": r.edad,
                 "Nota": r.nota,
                 "Líder": r.lider,
