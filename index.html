@@ -177,6 +177,9 @@
             <label for="direccion">Dirección</label>
             <input type="text" id="direccion" placeholder="Ingrese la dirección">
 
+            <label for="barrio">Barrio</label>
+            <input type="text" id="barrio" placeholder="Ingrese el barrio">
+
             <label for="genero">Género</label>
             <select id="genero">
                 <option value="">Seleccione el género</option>
@@ -187,6 +190,9 @@
 
             <label for="edad">Edad</label>
             <input type="number" id="edad" placeholder="Ingrese la edad">
+
+            <label for="profesion">Profesión</label>
+            <input type="text" id="profesion" placeholder="Ingrese la profesión">
 
             <label for="lider">Líder que registra</label>
             <input type="text" id="lider" placeholder="Nombre del líder">
@@ -222,12 +228,14 @@
             const telefono = document.getElementById('telefono').value.trim();
             const municipio = document.getElementById('municipio').value.trim();
             const direccion = document.getElementById('direccion').value.trim();
+            const barrio = document.getElementById('barrio').value.trim();
             const genero = document.getElementById('genero').value.trim();
             const edad = document.getElementById('edad').value.trim();
+            const profesion = document.getElementById('profesion').value.trim();
             const lider = document.getElementById('lider').value.trim();
             const nota = document.getElementById('nota').value.trim();
 
-            if (!cedula && !nombre && !telefono && !municipio && !direccion && !genero && !edad && !lider && !nota) {
+            if (!cedula && !nombre && !telefono && !municipio && !direccion && !barrio && !genero && !edad && !profesion && !lider && !nota) {
                 document.getElementById('errorMessage').textContent = 'No se puede registrar porque los campos están vacíos.';
                 document.getElementById('errorMessage').style.display = 'block';
                 setTimeout(() => {
@@ -242,8 +250,10 @@
                 telefono,
                 municipio,
                 direccion,
+                barrio,
                 genero,
                 edad,
+                profesion,
                 lider,
                 nota,
                 fecha: new Date().toISOString()
@@ -273,8 +283,10 @@
                 "Teléfono": r.telefono,
                 "Municipio": r.municipio,
                 "Dirección": r.direccion,
+                "Barrio": r.barrio,
                 "Género": r.genero,
                 "Edad": r.edad,
+                "Profesión": r.profesion,
                 "Nota": r.nota,
                 "Líder": r.lider,
                 "Fecha": new Date(r.fecha).toLocaleString()
