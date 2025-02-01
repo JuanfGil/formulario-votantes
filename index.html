@@ -197,6 +197,14 @@
             <label for="lider">Líder que registra</label>
             <input type="text" id="lider" placeholder="Nombre del líder">
 
+            <label for="tipoLider">Tipo de Líder</label>
+            <select id="tipoLider">
+                <option value="">Seleccione un tipo</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+            </select>
+
             <label for="nota">Nota</label>
             <input type="text" id="nota" placeholder="Ingrese una nota opcional">
 
@@ -233,9 +241,10 @@
             const edad = document.getElementById('edad').value.trim();
             const profesion = document.getElementById('profesion').value.trim();
             const lider = document.getElementById('lider').value.trim();
+            const tipoLider = document.getElementById('tipoLider').value.trim();
             const nota = document.getElementById('nota').value.trim();
 
-            if (!cedula && !nombre && !telefono && !municipio && !direccion && !barrio && !genero && !edad && !profesion && !lider && !nota) {
+            if (!cedula && !nombre && !telefono && !municipio && !direccion && !barrio && !genero && !edad && !profesion && !lider && !tipoLider && !nota) {
                 document.getElementById('errorMessage').textContent = 'No se puede registrar porque los campos están vacíos.';
                 document.getElementById('errorMessage').style.display = 'block';
                 setTimeout(() => {
@@ -255,6 +264,7 @@
                 edad,
                 profesion,
                 lider,
+                tipoLider,
                 nota,
                 fecha: new Date().toISOString()
             };
@@ -289,6 +299,7 @@
                 "Profesión": r.profesion,
                 "Nota": r.nota,
                 "Líder": r.lider,
+                "Tipo de líder":r.tipoLider,
                 "Fecha": new Date(r.fecha).toLocaleString()
             })));
 
