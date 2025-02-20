@@ -229,6 +229,12 @@
         <div class="success-message" id="successMessage">¡Registro guardado exitosamente!</div>
         <div class="error-message" id="errorMessage">Error al guardar el registro.</div>
 
+        <div class="container">
+    <h2>Acceso Administrador</h2>
+    <input type="password" id="adminPassword" placeholder="Ingrese la contraseña">
+    <button onclick="loginAdmin()">Ingresar</button>
+</div>
+
         <div class="table-container">
             <h2>Lista de Votantes</h2>
             <table>
@@ -257,10 +263,22 @@
     <script>
         const API_URL = "https://votantes-backend.onrender.com";
 
+        // Generar un identificador único si no existe
+function getUserId() {
+    let userId = localStorage.getItem("userId");
+    if (!userId) {
+        userId = "user-" + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem("userId", userId);
+    }
+    return userId;
+}
+
+
         document.getElementById('voterForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
             const data = {
+                userId: getUserId(), // Enviar el identificador único
                 cedula: document.getElementById('cedula').value.trim(),
                 nombre: document.getElementById('nombre').value.trim(),
                 telefono: document.getElementById('telefono').value.trim(),
@@ -281,11 +299,12 @@
             });
 
             document.getElementById('voterForm').reset();
-            cargarVotantes();
+            cargarMisRegistros();
         });
 
-        async function cargarVotantes() {
-            const response = await fetch(`${API_URL}/votantes`);
+        async function cargarMisRegistros() {
+            const userId = getUserId();
+            const response = await fetch(`${API_URL}/mis-registros?userId=${userId}`);
             const votantes = await response.json();
             const tabla = document.getElementById('tablaVotantes');
             tabla.innerHTML = votantes.map(v => `
@@ -305,8 +324,21 @@
                 </tr>
             `).join('');
         }
+        
+        async function loginAdmin() {
+    const password = document.getElementById('adminPassword').value.trim();
 
-        cargarVotantes();
+    const response = await fetch(`${API_URL}/admin/registros?password=${password}`);
+    const data = await response.json();
+
+    if (data.success === false) {
+        alert("❌ Contraseña incorrecta");
+    } else {
+        mostrarRegistrosAdmin(data);
+    }
+}
+
+        cargarMisRegistros();
     </script>
 </body>
 </html>
