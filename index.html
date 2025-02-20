@@ -278,7 +278,7 @@ document.getElementById('voterForm').addEventListener('submit', async function(e
     e.preventDefault();
 
     const data = {
-        userId: getUserId(), // Enviar el identificador único
+        userId: localStorage.getItem('userId'), // ✅ Enviar el identificador único
         cedula: document.getElementById('cedula').value.trim(),
         nombre: document.getElementById('nombre').value.trim(),
         telefono: document.getElementById('telefono').value.trim(),
@@ -289,24 +289,23 @@ document.getElementById('voterForm').addEventListener('submit', async function(e
         edad: document.getElementById('edad').value.trim(),
         profesion: document.getElementById('profesion').value.trim(),
         lider: document.getElementById('lider').value.trim(),
-        tipoLider: document.getElementById('tipoLider').value.trim()
+        tipoLider: document.getElementById('tipoLider').value.trim(),
+        nota: document.getElementById('nota').value.trim()
     };
 
-    try {
-        const response = await fetch(`${API_URL}/registrar`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        });
+    console.log("📤 Enviando datos:", data); // ✅ Verificar si `userId` se está enviando
 
-        if (!response.ok) {
-            throw new Error(`Error en el registro: ${response.statusText}`);
-        }
+    const response = await fetch(`${API_URL}/registrar`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    });
 
+    if (response.ok) {
         document.getElementById('voterForm').reset();
         cargarMisRegistros();
-    } catch (error) {
-        console.error("❌ Error al registrar:", error);
+    } else {
+        console.error("❌ Error al registrar el votante");
     }
 });
 
