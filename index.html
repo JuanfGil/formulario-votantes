@@ -271,31 +271,61 @@
             }
         });
 
-        async function cargarMisRegistros() {
-            const userId = getOrCreateUserId();
-            const response = await fetch(`${API_URL}/mis-registros?userId=${userId}`);
+    async function cargarMisRegistros() {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+        console.error("❌ Error: userId no encontrado en localStorage");
+        return;
+    }
 
-            if (!response.ok) return;
+    const url = `${API_URL}/mis-registros?userId=${userId}`;
+    console.log("📡 Consultando:", url); // Verificar que la URL es correcta
 
-            const votantes = await response.json();
-            document.getElementById('tablaVotantes').innerHTML = votantes.map(v => `
-                <tr>
-                    <td>${v.cedula}</td>
-                    <td>${v.nombre}</td>
-                    <td>${v.telefono}</td>
-                    <td>${v.municipio}</td>
-                    <td>${v.direccion}</td>
-                    <td>${v.barrio}</td>
-                    <td>${v.genero}</td>
-                    <td>${v.edad}</td>
-                    <td>${v.profesion}</td>
-                    <td>${v.lider}</td>
-                    <td>${v.tipolider}</td>
-                    <td>${v.nota}</td>
-                    <td>${new Date(v.fecha).toLocaleString("es-ES", { hour12: false })}</td>
-                </tr>
-            `).join('');
+    try {
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error(`Error al obtener registros: ${response.statusText}`);
         }
+
+        const votantes = await response.json();
+        console.log("📊 Registros obtenidos:", votantes); // Verificación en consola
+
+        // Verificar si hay registros
+        if (votantes.length === 0) {
+            console.warn("⚠️ No hay registros para este usuario.");
+            return;
+        }
+
+        // Verificar si el elemento tabla existe antes de modificarlo
+        const tabla = document.getElementById('tablaVotantes');
+        if (!tabla) {
+            console.error("❌ Error: No se encontró el elemento con id 'tablaVotantes'. Asegúrate de que existe en el HTML.");
+            return;
+        }
+
+        // Insertar los datos en la tabla
+        tabla.innerHTML = votantes.map(v => `
+            <tr>
+                <td>${v.cedula}</td>
+                <td>${v.nombre}</td>
+                <td>${v.telefono}</td>
+                <td>${v.municipio}</td>
+                <td>${v.direccion}</td>
+                <td>${v.barrio}</td>
+                <td>${v.genero}</td>
+                <td>${v.edad}</td>
+                <td>${v.profesion}</td>
+                <td>${v.lider}</td>
+                <td>${v.tipolider}</td>
+                <td>${v.nota ? v.nota : "Sin nota"}</td>
+                <td>${new Date(v.fecha).toLocaleString("es-ES", { hour12: false })}</td>
+            </tr>
+        `).join('');
+    } catch (error) {
+        console.error("❌ Error al cargar los registros:", error);
+    }
+}
 
         // Función de login para el administrador
     function loginAdmin() {
@@ -342,7 +372,7 @@
         `).join('');
     }
 
-        cargarMisRegistros();
+cargarMisRegistros();
     </script>
 </body>
 </html>
