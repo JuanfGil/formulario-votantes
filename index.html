@@ -3,8 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta property="og:title" content="Registro de Votantes Oficina - Nariño">
-    <meta property="og:description" content="Formulario de registro para la campaña en Nariño">
     <title>Registro de Votantes Oficina - Nariño</title>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -18,7 +16,7 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 20px auto;
             padding: 20px;
             background: #fff;
@@ -57,9 +55,40 @@
             background-color: #0056b3;
         }
 
-        .button-container {
-            display: flex;
-            gap: 10px;
+        .table-container {
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ccc;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+            position: sticky;
+            top: 0;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tbody tr:hover {
+            background-color: #ddd;
         }
 
         .success-message, .error-message {
@@ -79,32 +108,6 @@
             background-color: #f8d7da;
             color: #721c24;
         }
-
-        .table-container {
-            margin-top: 20px;
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            background-color: #fff;
-        }
-
-        table, th, td {
-            border: 1px solid #ccc;
-        }
-
-        th, td {
-            padding: 10px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #007bff;
-            color: white;
-        }
     </style>
 </head>
 <body>
@@ -112,13 +115,13 @@
         <h1>Registro de Votantes Oficina - Nariño</h1>
         <form id="voterForm">
             <label for="cedula">Cédula</label>
-            <input type="number" id="cedula" placeholder="Ingrese el número de cédula" required>
+            <input type="number" id="cedula" required>
 
             <label for="nombre">Nombre Completo</label>
-            <input type="text" id="nombre" placeholder="Ingrese el nombre completo" required>
+            <input type="text" id="nombre" required>
 
             <label for="telefono">Teléfono</label>
-            <input type="tel" id="telefono" placeholder="Ingrese el número de teléfono" required>
+            <input type="tel" id="telefono" required>
 
             <label for="municipio">Municipio</label>
             <select id="municipio" required>
@@ -190,10 +193,10 @@
             </select>
 
             <label for="direccion">Dirección</label>
-            <input type="text" id="direccion" placeholder="Ingrese la dirección" required>
+            <input type="text" id="direccion" required>
 
             <label for="barrio">Barrio</label>
-            <input type="text" id="barrio" placeholder="Ingrese el barrio" required>
+            <input type="text" id="barrio" required>
 
             <label for="genero">Género</label>
             <select id="genero" required>
@@ -204,13 +207,13 @@
             </select>
 
             <label for="edad">Edad</label>
-            <input type="number" id="edad" placeholder="Ingrese la edad" required>
+            <input type="number" id="edad" required>
 
             <label for="profesion">Profesión</label>
-            <input type="text" id="profesion" placeholder="Ingrese la profesión" required>
+            <input type="text" id="profesion" required>
 
             <label for="lider">Líder que registra</label>
-            <input type="text" id="lider" placeholder="Nombre del líder" required>
+            <input type="text" id="lider" required>
 
             <label for="tipoLider">Tipo de Líder</label>
             <select id="tipoLider" required>
@@ -219,9 +222,6 @@
                 <option value="B">B</option>
                 <option value="C">C</option>
             </select>
-
-            <label for="nota">Nota</label>
-            <input type="text" id="nota" placeholder="Nota opcional">
 
             <button type="submit">Registrar</button>
         </form>
@@ -245,12 +245,10 @@
                         <th>Profesión</th>
                         <th>Líder</th>
                         <th>Tipo de Líder</th>
-                        <th>Nota</th>
                         <th>Fecha</th>
                     </tr>
                 </thead>
                 <tbody id="tablaVotantes">
-                    <!-- Aquí se insertarán los datos -->
                 </tbody>
             </table>
         </div>
@@ -273,8 +271,7 @@
                 edad: document.getElementById('edad').value.trim(),
                 profesion: document.getElementById('profesion').value.trim(),
                 lider: document.getElementById('lider').value.trim(),
-                tipoLider: document.getElementById('tipoLider').value.trim(),
-                nota: document.getElementById('nota').value.trim()
+                tipoLider: document.getElementById('tipoLider').value.trim()
             };
 
             await fetch(`${API_URL}/registrar`, {
@@ -304,8 +301,7 @@
                     <td>${v.profesion}</td>
                     <td>${v.lider}</td>
                     <td>${v.tipolider}</td>
-                    <td>${v.nota}</td>
-                    <td>${new Date(v.fecha).toLocaleString()}</td>
+                    <td>${new Date(v.fecha).toLocaleString("es-ES", { hour12: false })}</td>
                 </tr>
             `).join('');
         }
@@ -314,4 +310,5 @@
     </script>
 </body>
 </html>
+
 
