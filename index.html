@@ -58,7 +58,6 @@
         .table-container {
             margin-top: 20px;
             overflow-x: auto;
-            display: none; /* Ocultamos la tabla hasta que el admin inicie sesión */
         }
 
         table {
@@ -127,9 +126,70 @@
             <label for="municipio">Municipio</label>
             <select id="municipio" required>
                 <option value="">Seleccione un municipio</option>
-                <option value="Pasto">Pasto</option>
+                <option value="Albán">Albán</option>
+                <option value="Aldana">Aldana</option>
+                <option value="Ancuyá">Ancuyá</option>
+                <option value="Arboleda">Arboleda</option>
+                <option value="Barbacoas">Barbacoas</option>
+                <option value="Belén">Belén</option>
+                <option value="Buesaco">Buesaco</option>
+                <option value="Chachagüí">Chachagüí</option>
+                <option value="Colón">Colón</option>
+                <option value="Consacá">Consacá</option>
+                <option value="Contadero">Contadero</option>
+                <option value="Córdoba">Córdoba</option>
+                <option value="Cuaspud">Cuaspud</option>
+                <option value="Cumbal">Cumbal</option>
+                <option value="Cumbitara">Cumbitara</option>
+                <option value="El Charco">El Charco</option>
+                <option value="El Peñol">El Peñol</option>
+                <option value="El Rosario">El Rosario</option>
+                <option value="El Tablón de Gómez">El Tablón de Gómez</option>
+                <option value="El Tambo">El Tambo</option>
+                <option value="Francisco Pizarro">Francisco Pizarro</option>
+                <option value="Funes">Funes</option>
+                <option value="Guachucal">Guachucal</option>
+                <option value="Guaitarilla">Guaitarilla</option>
+                <option value="Gualmatán">Gualmatán</option>
+                <option value="Iles">Iles</option>
+                <option value="Imués">Imués</option>
                 <option value="Ipiales">Ipiales</option>
+                <option value="La Cruz">La Cruz</option>
+                <option value="La Florida">La Florida</option>
+                <option value="La Llanada">La Llanada</option>
+                <option value="La Tola">La Tola</option>
+                <option value="La Unión">La Unión</option>
+                <option value="Leiva">Leiva</option>
+                <option value="Linares">Linares</option>
+                <option value="Los Andes">Los Andes</option>
+                <option value="Magüí Payán">Magüí Payán</option>
+                <option value="Mallama">Mallama</option>
+                <option value="Mosquera">Mosquera</option>
+                <option value="Nariño">Nariño</option>
+                <option value="Olaya Herrera">Olaya Herrera</option>
+                <option value="Ospina">Ospina</option>
+                <option value="Pasto">Pasto</option>
+                <option value="Policarpa">Policarpa</option>
+                <option value="Potosí">Potosí</option>
+                <option value="Providencia">Providencia</option>
+                <option value="Puerres">Puerres</option>
+                <option value="Pupiales">Pupiales</option>
+                <option value="Ricaurte">Ricaurte</option>
+                <option value="Roberto Payán">Roberto Payán</option>
+                <option value="Samaniego">Samaniego</option>
+                <option value="San Bernardo">San Bernardo</option>
+                <option value="San Lorenzo">San Lorenzo</option>
+                <option value="San Pablo">San Pablo</option>
+                <option value="San Pedro de Cartago">San Pedro de Cartago</option>
+                <option value="Sandoná">Sandoná</option>
+                <option value="Santa Bárbara">Santa Bárbara</option>
+                <option value="Santacruz">Santacruz</option>
+                <option value="Sapuyes">Sapuyes</option>
+                <option value="Taminango">Taminango</option>
+                <option value="Tangua">Tangua</option>
                 <option value="Tumaco">Tumaco</option>
+                <option value="Túquerres">Túquerres</option>
+                <option value="Yacuanquer">Yacuanquer</option>
             </select>
 
             <label for="direccion">Dirección</label>
@@ -166,13 +226,16 @@
             <button type="submit">Registrar</button>
         </form>
 
-        <div class="container">
-            <h2>Acceso Administrador</h2>
-            <input type="password" id="adminPassword" placeholder="Ingrese la contraseña">
-            <button onclick="loginAdmin()">Ingresar</button>
-        </div>
+        <div class="success-message" id="successMessage">¡Registro guardado exitosamente!</div>
+        <div class="error-message" id="errorMessage">Error al guardar el registro.</div>
 
-        <div class="table-container" id="adminTableContainer">
+        <div class="container">
+    <h2>Acceso Administrador</h2>
+    <input type="password" id="adminPassword" placeholder="Ingrese la contraseña">
+    <button onclick="loginAdmin()">Ingresar</button>
+</div>
+
+        <div class="table-container">
             <h2>Lista de Votantes</h2>
             <table>
                 <thead>
@@ -191,7 +254,8 @@
                         <th>Fecha</th>
                     </tr>
                 </thead>
-                <tbody id="tablaVotantes"></tbody>
+                <tbody id="tablaVotantes">
+                </tbody>
             </table>
         </div>
     </div>
@@ -199,20 +263,22 @@
     <script>
         const API_URL = "https://votantes-backend.onrender.com";
 
-        function getUserId() {
-            let userId = localStorage.getItem("userId");
-            if (!userId) {
-                userId = "user-" + Math.random().toString(36).substr(2, 9);
-                localStorage.setItem("userId", userId);
-            }
-            return userId;
-        }
+        // Generar un identificador único si no existe
+function getUserId() {
+    let userId = localStorage.getItem("userId");
+    if (!userId) {
+        userId = "user-" + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem("userId", userId);
+    }
+    return userId;
+}
+
 
         document.getElementById('voterForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
             const data = {
-                userId: getUserId(),
+                userId: getUserId(), // Enviar el identificador único
                 cedula: document.getElementById('cedula').value.trim(),
                 nombre: document.getElementById('nombre').value.trim(),
                 telefono: document.getElementById('telefono').value.trim(),
@@ -223,10 +289,10 @@
                 edad: document.getElementById('edad').value.trim(),
                 profesion: document.getElementById('profesion').value.trim(),
                 lider: document.getElementById('lider').value.trim(),
-                tipoLider: document.getElementById('tipolider').value.trim()
+                tipoLider: document.getElementById('tipoLider').value.trim()
             };
 
-            await fetch(`${API_URL}/registrar`, {
+            await fetch(${API_URL}/registrar, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
@@ -236,20 +302,52 @@
             cargarMisRegistros();
         });
 
-        async function loginAdmin() {
-            const password = document.getElementById('adminPassword').value.trim();
-            const response = await fetch(`${API_URL}/admin/registros?password=${password}`);
-            const data = await response.json();
+        async function cargarMisRegistros() {
+    const userId = getUserId(); // Obtener el ID del usuario desde localStorage
+    const response = await fetch(`${API_URL}/mis-registros?userId=${userId}`);
 
-            if (data.success === false) {
-                alert("❌ Contraseña incorrecta");
-            } else {
-                document.getElementById('adminTableContainer').style.display = "block";
-                mostrarRegistrosAdmin(data);
-            }
+    if (!response.ok) {
+        console.error("Error al obtener los registros:", response.statusText);
+        return;
+    }
+            async function loginAdmin() {
+    const password = document.getElementById('adminPassword').value.trim();
+
+    const response = await fetch(${"https://votantes-backend.onrender.com"}/admin/registros?password=${password});
+    const data = await response.json();
+
+    if (data.success === false) {
+        alert("❌ Contraseña incorrecta");
+    } else {
+        mostrarRegistrosAdmin(data);
+    }
+}
+
+        async function cargarMisRegistros() {
+            const userId = getUserId();
+            const response = await fetch(${API_URL}/mis-registros?userId=${userId});
+            const votantes = await response.json();
+            const tabla = document.getElementById('tablaVotantes');
+            tabla.innerHTML = votantes.map(v => 
+                <tr>
+                    <td>${v.cedula}</td>
+                    <td>${v.nombre}</td>
+                    <td>${v.telefono}</td>
+                    <td>${v.municipio}</td>
+                    <td>${v.direccion}</td>
+                    <td>${v.barrio}</td>
+                    <td>${v.genero}</td>
+                    <td>${v.edad}</td>
+                    <td>${v.profesion}</td>
+                    <td>${v.lider}</td>
+                    <td>${v.tipolider}</td>
+                    <td>${new Date(v.fecha).toLocaleString("es-ES", { hour12: false })}</td>
+                </tr>
+            ).join('');
         }
+        
+
+        cargarMisRegistros();
     </script>
 </body>
 </html>
-
-
