@@ -229,11 +229,11 @@
         <div class="success-message" id="successMessage">¡Registro guardado exitosamente!</div>
         <div class="error-message" id="errorMessage">Error al guardar el registro.</div>
 
-        <div class="container">
-    <h2>Acceso Administrador</h2>
-    <input type="password" id="adminPassword" placeholder="Ingrese la contraseña">
-    <button onclick="loginAdmin()">Ingresar</button>
-</div>
+    <div class="container">
+        <h2>Acceso Administrador</h2>
+        <input type="password" id="adminPassword" placeholder="Ingrese la contraseña">
+        <button onclick="loginAdmin()">Ingresar</button>
+    </div>
 
         <div class="table-container">
             <h2>Lista de Votantes</h2>
@@ -350,7 +350,7 @@ async function cargarMisRegistros() {
                 <td>${v.edad}</td>
                 <td>${v.profesion}</td>
                 <td>${v.lider}</td>
-                <td>${v.tipoLider}</td>
+                <td>${v.tipolider}</td>
                 <td>${new Date(v.fecha).toLocaleString("es-ES", { hour12: false })}</td>
             </tr>
         `).join('');
@@ -360,47 +360,48 @@ async function cargarMisRegistros() {
 }
 
 // Función de login para el administrador
-async function loginAdmin() {
-    const password = document.getElementById('adminPassword').value.trim();
-    const url = `${API_URL}/admin/registros?password=${password}`;
-    console.log("🔍 Consultando:", url); // Depuración
+    function loginAdmin() {
+        const password = document.getElementById('adminPassword').value.trim();
+        const url = `${API_URL}/admin/registros?password=${password}`;
+        console.log("🔍 Consultando:", url); // Depuración
 
-    try {
-        const response = await fetch(url);
-
-        if (!response.ok) {
-            throw new Error(`Error de autenticación: ${response.statusText}`);
-        }
-
-        const votantes = await response.json();
-        console.log("📊 Registros ADMIN obtenidos:", votantes); // Depuración
-        mostrarRegistrosAdmin(votantes);
-    } catch (error) {
-        console.error("❌ Error en login admin:", error);
-        alert("❌ Contraseña incorrecta o error en el servidor");
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Error de autenticación: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(votantes => {
+                console.log("📊 Registros ADMIN obtenidos:", votantes); // Depuración
+                mostrarRegistrosAdmin(votantes);
+            })
+            .catch(error => {
+                console.error("❌ Error en login admin:", error);
+                alert("❌ Contraseña incorrecta o error en el servidor");
+            });
     }
-}
 
-// Mostrar los registros del administrador en la tabla
-function mostrarRegistrosAdmin(votantes) {
-    const tabla = document.getElementById('tablaVotantes');
-    tabla.innerHTML = votantes.map(v => `
-        <tr>
-            <td>${v.cedula}</td>
-            <td>${v.nombre}</td>
-            <td>${v.telefono}</td>
-            <td>${v.municipio}</td>
-            <td>${v.direccion}</td>
-            <td>${v.barrio}</td>
-            <td>${v.genero}</td>
-            <td>${v.edad}</td>
-            <td>${v.profesion}</td>
-            <td>${v.lider}</td>
-            <td>${v.tipoLider}</td>
-            <td>${new Date(v.fecha).toLocaleString("es-ES", { hour12: false })}</td>
-        </tr>
-    `).join('');
-}
+    // Mostrar los registros del administrador en la tabla
+    function mostrarRegistrosAdmin(votantes) {
+        const tabla = document.getElementById('tablaVotantes');
+        tabla.innerHTML = votantes.map(v => `
+            <tr>
+                <td>${v.cedula}</td>
+                <td>${v.nombre}</td>
+                <td>${v.telefono}</td>
+                <td>${v.municipio}</td>
+                <td>${v.direccion}</td>
+                <td>${v.barrio}</td>
+                <td>${v.genero}</td>
+                <td>${v.edad}</td>
+                <td>${v.profesion}</td>
+                <td>${v.lider}</td>
+                <td>${v.tipolider}</td>
+                <td>${new Date(v.fecha).toLocaleString("es-ES", { hour12: false })}</td>
+            </tr>
+        `).join('');
+    }
 
 // Cargar registros del usuario actual al cargar la página
 cargarMisRegistros();
