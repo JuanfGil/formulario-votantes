@@ -263,15 +263,16 @@
     <script>
         const API_URL = "https://votantes-backend.onrender.com";
 
-        // Obtener o generar un identificador único para el usuario
-function getUserId() {
-    let userId = localStorage.getItem("userId");
-    if (!userId) {
-        userId = "user-" + Math.random().toString(36).substr(2, 9);
-        localStorage.setItem("userId", userId);
-    }
-    return userId;
-}
+        
+// Función para crear un nuevo ID de usuario si no existe
+        function getOrCreateUserId() {
+            let userId = localStorage.getItem('userId');
+            if (!userId) {
+                userId = `user-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
+                localStorage.setItem('userId', userId);
+            }
+            return userId;
+        }
 
 // Registrar un nuevo votante
 document.getElementById('voterForm').addEventListener('submit', async function(e) {
