@@ -18,7 +18,7 @@
         }
 
         .container {
-            max-width: 600px;
+            max-width: 800px;
             margin: 20px auto;
             padding: 20px;
             background: #fff;
@@ -80,15 +80,30 @@
             color: #721c24;
         }
 
-        .stat-container {
+        .table-container {
             margin-top: 20px;
-            padding: 15px;
-            background-color: #e8f0fe;
-            border-radius: 5px;
+            overflow-x: auto;
         }
 
-        .stat-container p {
-            margin: 5px 0;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+        }
+
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
         }
     </style>
 </head>
@@ -97,91 +112,32 @@
         <h1>Registro de Votantes Oficina - Nariño</h1>
         <form id="voterForm">
             <label for="cedula">Cédula</label>
-            <input type="number" id="cedula" placeholder="Ingrese el número de cédula">
+            <input type="number" id="cedula" placeholder="Ingrese el número de cédula" required>
 
             <label for="nombre">Nombre Completo</label>
-            <input type="text" id="nombre" placeholder="Ingrese el nombre completo">
+            <input type="text" id="nombre" placeholder="Ingrese el nombre completo" required>
 
             <label for="telefono">Teléfono</label>
-            <input type="tel" id="telefono" placeholder="Ingrese el número de teléfono">
+            <input type="tel" id="telefono" placeholder="Ingrese el número de teléfono" required>
 
             <label for="municipio">Municipio</label>
-            <select id="municipio">
+            <select id="municipio" required>
                 <option value="">Seleccione un municipio</option>
-                <option value="Albán">Albán</option>
-                <option value="Aldana">Aldana</option>
-                <option value="Ancuyá">Ancuyá</option>
-                <option value="Arboleda">Arboleda</option>
-                <option value="Barbacoas">Barbacoas</option>
-                <option value="Belén">Belén</option>
-                <option value="Buesaco">Buesaco</option>
-                <option value="Chachagüí">Chachagüí</option>
-                <option value="Colón">Colón</option>
-                <option value="Consacá">Consacá</option>
-                <option value="Contadero">Contadero</option>
-                <option value="Córdoba">Córdoba</option>
-                <option value="Cuaspud">Cuaspud</option>
-                <option value="Cumbal">Cumbal</option>
-                <option value="Cumbitara">Cumbitara</option>
-                <option value="El Charco">El Charco</option>
-                <option value="El Peñol">El Peñol</option>
-                <option value="El Rosario">El Rosario</option>
-                <option value="El Tablón de Gómez">El Tablón de Gómez</option>
-                <option value="El Tambo">El Tambo</option>
-                <option value="Francisco Pizarro">Francisco Pizarro</option>
-                <option value="Funes">Funes</option>
-                <option value="Guachucal">Guachucal</option>
-                <option value="Guaitarilla">Guaitarilla</option>
-                <option value="Gualmatán">Gualmatán</option>
-                <option value="Iles">Iles</option>
-                <option value="Imués">Imués</option>
-                <option value="Ipiales">Ipiales</option>
-                <option value="La Cruz">La Cruz</option>
-                <option value="La Florida">La Florida</option>
-                <option value="La Llanada">La Llanada</option>
-                <option value="La Tola">La Tola</option>
-                <option value="La Unión">La Unión</option>
-                <option value="Leiva">Leiva</option>
-                <option value="Linares">Linares</option>
-                <option value="Los Andes">Los Andes</option>
-                <option value="Magüí Payán">Magüí Payán</option>
-                <option value="Mallama">Mallama</option>
-                <option value="Mosquera">Mosquera</option>
-                <option value="Nariño">Nariño</option>
-                <option value="Olaya Herrera">Olaya Herrera</option>
-                <option value="Ospina">Ospina</option>
                 <option value="Pasto">Pasto</option>
-                <option value="Policarpa">Policarpa</option>
-                <option value="Potosí">Potosí</option>
-                <option value="Providencia">Providencia</option>
-                <option value="Puerres">Puerres</option>
-                <option value="Pupiales">Pupiales</option>
-                <option value="Ricaurte">Ricaurte</option>
-                <option value="Roberto Payán">Roberto Payán</option>
-                <option value="Samaniego">Samaniego</option>
-                <option value="San Bernardo">San Bernardo</option>
-                <option value="San Lorenzo">San Lorenzo</option>
-                <option value="San Pablo">San Pablo</option>
-                <option value="San Pedro de Cartago">San Pedro de Cartago</option>
-                <option value="Sandoná">Sandoná</option>
-                <option value="Santa Bárbara">Santa Bárbara</option>
-                <option value="Santacruz">Santacruz</option>
-                <option value="Sapuyes">Sapuyes</option>
-                <option value="Taminango">Taminango</option>
-                <option value="Tangua">Tangua</option>
+                <option value="Ipiales">Ipiales</option>
                 <option value="Tumaco">Tumaco</option>
                 <option value="Túquerres">Túquerres</option>
-                <option value="Yacuanquer">Yacuanquer</option>
+                <option value="La Unión">La Unión</option>
             </select>
 
             <label for="direccion">Dirección</label>
-            <input type="text" id="direccion" placeholder="Ingrese la dirección">
+            <input type="text" id="direccion" placeholder="Ingrese la dirección" required>
 
             <label for="barrio">Barrio</label>
-            <input type="text" id="barrio" placeholder="Ingrese el barrio">
+            <input type="text" id="barrio" placeholder="Ingrese el barrio" required>
 
             <label for="genero">Género</label>
-            <select id="genero">
+            <select id="genero" required>
                 <option value="">Seleccione el género</option>
                 <option value="Masculino">Masculino</option>
                 <option value="Femenino">Femenino</option>
@@ -189,16 +145,16 @@
             </select>
 
             <label for="edad">Edad</label>
-            <input type="number" id="edad" placeholder="Ingrese la edad">
+            <input type="number" id="edad" placeholder="Ingrese la edad" required>
 
             <label for="profesion">Profesión</label>
-            <input type="text" id="profesion" placeholder="Ingrese la profesión">
+            <input type="text" id="profesion" placeholder="Ingrese la profesión" required>
 
             <label for="lider">Líder que registra</label>
-            <input type="text" id="lider" placeholder="Nombre del líder">
+            <input type="text" id="lider" placeholder="Nombre del líder" required>
 
             <label for="tipoLider">Tipo de Líder</label>
-            <select id="tipoLider">
+            <select id="tipoLider" required>
                 <option value="">Seleccione un tipo</option>
                 <option value="A">A</option>
                 <option value="B">B</option>
@@ -206,128 +162,97 @@
             </select>
 
             <label for="nota">Nota</label>
-            <input type="text" id="nota" placeholder="Ingrese una nota opcional">
+            <input type="text" id="nota" placeholder="Nota opcional">
 
             <button type="submit">Registrar</button>
         </form>
 
-        <div id="successMessage" style="display:none;color:green;">¡Registro guardado exitosamente!</div>
-        <div id="errorMessage" style="display:none;color:red;">Error al guardar el registro.</div>
+        <div class="success-message" id="successMessage">¡Registro guardado exitosamente!</div>
+        <div class="error-message" id="errorMessage">Error al guardar el registro.</div>
 
-        <div class="stat-container">
-            <p>Total registros hoy: <span id="todayCount">0</span></p>
-            <p>Total registros: <span id="totalCount">0</span></p>
-        </div>
-
-        <div class="button-container">
-            <button id="downloadButton" style="background-color: #34a853;">Descargar Excel</button>
-            <button id="deleteButton" style="background-color: #dc3545;">Eliminar Registros</button>
+        <div class="table-container">
+            <h2>Lista de Votantes</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Cédula</th>
+                        <th>Nombre</th>
+                        <th>Teléfono</th>
+                        <th>Municipio</th>
+                        <th>Dirección</th>
+                        <th>Barrio</th>
+                        <th>Género</th>
+                        <th>Edad</th>
+                        <th>Profesión</th>
+                        <th>Líder</th>
+                        <th>Tipo de Líder</th>
+                        <th>Nota</th>
+                        <th>Fecha</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaVotantes">
+                    <!-- Aquí se insertarán los datos -->
+                </tbody>
+            </table>
         </div>
     </div>
 
     <script>
-        let registros = JSON.parse(localStorage.getItem('registros')) || [];
+        const API_URL = "https://votantes-backend.onrender.com";
 
-        document.getElementById('voterForm').addEventListener('submit', function(e) {
+        document.getElementById('voterForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
-            const cedula = document.getElementById('cedula').value.trim();
-            const nombre = document.getElementById('nombre').value.trim();
-            const telefono = document.getElementById('telefono').value.trim();
-            const municipio = document.getElementById('municipio').value.trim();
-            const direccion = document.getElementById('direccion').value.trim();
-            const barrio = document.getElementById('barrio').value.trim();
-            const genero = document.getElementById('genero').value.trim();
-            const edad = document.getElementById('edad').value.trim();
-            const profesion = document.getElementById('profesion').value.trim();
-            const lider = document.getElementById('lider').value.trim();
-            const tipoLider = document.getElementById('tipoLider').value.trim();
-            const nota = document.getElementById('nota').value.trim();
-
-            if (!cedula && !nombre && !telefono && !municipio && !direccion && !barrio && !genero && !edad && !profesion && !lider && !tipoLider && !nota) {
-                document.getElementById('errorMessage').textContent = 'No se puede registrar porque los campos están vacíos.';
-                document.getElementById('errorMessage').style.display = 'block';
-                setTimeout(() => {
-                    document.getElementById('errorMessage').style.display = 'none';
-                }, 3000);
-                return;
-            }
-
-            const registro = {
-                cedula,
-                nombre,
-                telefono,
-                municipio,
-                direccion,
-                barrio,
-                genero,
-                edad,
-                profesion,
-                lider,
-                tipoLider,
-                nota,
-                fecha: new Date().toISOString()
+            const data = {
+                cedula: document.getElementById('cedula').value.trim(),
+                nombre: document.getElementById('nombre').value.trim(),
+                telefono: document.getElementById('telefono').value.trim(),
+                municipio: document.getElementById('municipio').value.trim(),
+                direccion: document.getElementById('direccion').value.trim(),
+                barrio: document.getElementById('barrio').value.trim(),
+                genero: document.getElementById('genero').value.trim(),
+                edad: document.getElementById('edad').value.trim(),
+                profesion: document.getElementById('profesion').value.trim(),
+                lider: document.getElementById('lider').value.trim(),
+                tipoLider: document.getElementById('tipoLider').value.trim(),
+                nota: document.getElementById('nota').value.trim()
             };
 
-            registros.push(registro);
-            localStorage.setItem('registros', JSON.stringify(registros));
-
-            document.getElementById('successMessage').style.display = 'block';
-            setTimeout(() => {
-                document.getElementById('successMessage').style.display = 'none';
-            }, 3000);
+            await fetch(`${API_URL}/registrar`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
 
             document.getElementById('voterForm').reset();
-            actualizarContadores();
+            cargarVotantes();
         });
 
-        document.getElementById('downloadButton').addEventListener('click', function() {
-            if (registros.length === 0) {
-                alert("No hay registros para descargar.");
-                return;
-            }
-
-            const ws = XLSX.utils.json_to_sheet(registros.map(r => ({
-                "Cédula": r.cedula,
-                "Nombre": r.nombre,
-                "Teléfono": r.telefono,
-                "Municipio": r.municipio,
-                "Dirección": r.direccion,
-                "Barrio": r.barrio,
-                "Género": r.genero,
-                "Edad": r.edad,
-                "Profesión": r.profesion,
-                "Nota": r.nota,
-                "Líder": r.lider,
-                "Tipo de líder":r.tipoLider,
-                "Fecha": new Date(r.fecha).toLocaleString()
-            })));
-
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Registros");
-
-            XLSX.writeFile(wb, "Registros.xlsx");
-        });
-
-        document.getElementById('deleteButton').addEventListener('click', function() {
-            if (confirm("¿Estás seguro de que deseas eliminar todos los registros? Esta acción no se puede deshacer.")) {
-                registros = [];
-                localStorage.removeItem('registros');
-                actualizarContadores();
-                alert("Todos los registros han sido eliminados correctamente.");
-            }
-        });
-
-        function actualizarContadores() {
-            const hoy = new Date().toLocaleDateString();
-            const registrosHoy = registros.filter(r => new Date(r.fecha).toLocaleDateString() === hoy).length;
-
-            document.getElementById('todayCount').textContent = registrosHoy;
-            document.getElementById('totalCount').textContent = registros.length;
+        async function cargarVotantes() {
+            const response = await fetch(`${API_URL}/votantes`);
+            const votantes = await response.json();
+            const tabla = document.getElementById('tablaVotantes');
+            tabla.innerHTML = votantes.map(v => `
+                <tr>
+                    <td>${v.cedula}</td>
+                    <td>${v.nombre}</td>
+                    <td>${v.telefono}</td>
+                    <td>${v.municipio}</td>
+                    <td>${v.direccion}</td>
+                    <td>${v.barrio}</td>
+                    <td>${v.genero}</td>
+                    <td>${v.edad}</td>
+                    <td>${v.profesion}</td>
+                    <td>${v.lider}</td>
+                    <td>${v.tipoLider}</td>
+                    <td>${v.nota}</td>
+                    <td>${new Date(v.fecha).toLocaleString()}</td>
+                </tr>
+            `).join('');
         }
 
-        // Inicializar contadores al cargar la página
-        actualizarContadores();
+        cargarVotantes();
     </script>
 </body>
 </html>
+
