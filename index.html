@@ -263,17 +263,6 @@
     <script>
         const API_URL = "https://votantes-backend.onrender.com";
 
-        // Generar un identificador único si no existe
-function getUserId() {
-    let userId = localStorage.getItem("userId");
-    if (!userId) {
-        userId = "user-" + Math.random().toString(36).substr(2, 9);
-        localStorage.setItem("userId", userId);
-    }
-    return userId;
-}
-
-
         // Obtener o generar un identificador único para el usuario
 function getUserId() {
     let userId = localStorage.getItem("userId");
