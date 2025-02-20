@@ -274,80 +274,133 @@ function getUserId() {
 }
 
 
-        document.getElementById('voterForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
+        // Obtener o generar un identificador único para el usuario
+function getUserId() {
+    let userId = localStorage.getItem("userId");
+    if (!userId) {
+        userId = "user-" + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem("userId", userId);
+    }
+    return userId;
+}
 
-            const data = {
-                userId: getUserId(), // Enviar el identificador único
-                cedula: document.getElementById('cedula').value.trim(),
-                nombre: document.getElementById('nombre').value.trim(),
-                telefono: document.getElementById('telefono').value.trim(),
-                municipio: document.getElementById('municipio').value.trim(),
-                direccion: document.getElementById('direccion').value.trim(),
-                barrio: document.getElementById('barrio').value.trim(),
-                genero: document.getElementById('genero').value.trim(),
-                edad: document.getElementById('edad').value.trim(),
-                profesion: document.getElementById('profesion').value.trim(),
-                lider: document.getElementById('lider').value.trim(),
-                tipoLider: document.getElementById('tipoLider').value.trim()
-            };
+// Registrar un nuevo votante
+document.getElementById('voterForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
 
-            await fetch(${API_URL}/registrar, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
+    const data = {
+        userId: getUserId(), // Enviar el identificador único
+        cedula: document.getElementById('cedula').value.trim(),
+        nombre: document.getElementById('nombre').value.trim(),
+        telefono: document.getElementById('telefono').value.trim(),
+        municipio: document.getElementById('municipio').value.trim(),
+        direccion: document.getElementById('direccion').value.trim(),
+        barrio: document.getElementById('barrio').value.trim(),
+        genero: document.getElementById('genero').value.trim(),
+        edad: document.getElementById('edad').value.trim(),
+        profesion: document.getElementById('profesion').value.trim(),
+        lider: document.getElementById('lider').value.trim(),
+        tipoLider: document.getElementById('tipoLider').value.trim()
+    };
 
-            document.getElementById('voterForm').reset();
-            cargarMisRegistros();
+    try {
+        const response = await fetch(`${API_URL}/registrar`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
         });
 
-        async function cargarMisRegistros() {
-    const userId = getUserId(); // Obtener el ID del usuario desde localStorage
-    const response = await fetch(`${API_URL}/mis-registros?userId=${userId}`);
+        if (!response.ok) {
+            throw new Error(`Error en el registro: ${response.statusText}`);
+        }
 
-    if (!response.ok) {
-        console.error("Error al obtener los registros:", response.statusText);
-        return;
+        document.getElementById('voterForm').reset();
+        cargarMisRegistros();
+    } catch (error) {
+        console.error("❌ Error al registrar:", error);
     }
-            async function loginAdmin() {
-    const password = document.getElementById('adminPassword').value.trim();
+});
 
-    const response = await fetch(${"https://votantes-backend.onrender.com"}/admin/registros?password=${password});
-    const data = await response.json();
+// Cargar los registros del usuario actual
+async function cargarMisRegistros() {
+    const userId = getUserId();
+    const url = `${API_URL}/mis-registros?userId=${userId}`;
+    console.log("🔍 Consultando:", url); // Depuración
 
-    if (data.success === false) {
-        alert("❌ Contraseña incorrecta");
-    } else {
-        mostrarRegistrosAdmin(data);
+    try {
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error(`Error al obtener registros: ${response.statusText}`);
+        }
+
+        const votantes = await response.json();
+        console.log("📊 Registros obtenidos:", votantes); // Depuración
+
+        const tabla = document.getElementById('tablaVotantes');
+        tabla.innerHTML = votantes.map(v => `
+            <tr>
+                <td>${v.cedula}</td>
+                <td>${v.nombre}</td>
+                <td>${v.telefono}</td>
+                <td>${v.municipio}</td>
+                <td>${v.direccion}</td>
+                <td>${v.barrio}</td>
+                <td>${v.genero}</td>
+                <td>${v.edad}</td>
+                <td>${v.profesion}</td>
+                <td>${v.lider}</td>
+                <td>${v.tipoLider}</td>
+                <td>${new Date(v.fecha).toLocaleString("es-ES", { hour12: false })}</td>
+            </tr>
+        `).join('');
+    } catch (error) {
+        console.error("❌ Error al cargar los registros:", error);
     }
 }
 
-        async function cargarMisRegistros() {
-            const userId = getUserId();
-            const response = await fetch(${API_URL}/mis-registros?userId=${userId});
-            const votantes = await response.json();
-            const tabla = document.getElementById('tablaVotantes');
-            tabla.innerHTML = votantes.map(v => 
-                <tr>
-                    <td>${v.cedula}</td>
-                    <td>${v.nombre}</td>
-                    <td>${v.telefono}</td>
-                    <td>${v.municipio}</td>
-                    <td>${v.direccion}</td>
-                    <td>${v.barrio}</td>
-                    <td>${v.genero}</td>
-                    <td>${v.edad}</td>
-                    <td>${v.profesion}</td>
-                    <td>${v.lider}</td>
-                    <td>${v.tipolider}</td>
-                    <td>${new Date(v.fecha).toLocaleString("es-ES", { hour12: false })}</td>
-                </tr>
-            ).join('');
-        }
-        
+// Función de login para el administrador
+async function loginAdmin() {
+    const password = document.getElementById('adminPassword').value.trim();
+    const url = `${API_URL}/admin/registros?password=${password}`;
+    console.log("🔍 Consultando:", url); // Depuración
 
-        cargarMisRegistros();
-    </script>
-</body>
-</html>
+    try {
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error(`Error de autenticación: ${response.statusText}`);
+        }
+
+        const votantes = await response.json();
+        console.log("📊 Registros ADMIN obtenidos:", votantes); // Depuración
+        mostrarRegistrosAdmin(votantes);
+    } catch (error) {
+        console.error("❌ Error en login admin:", error);
+        alert("❌ Contraseña incorrecta o error en el servidor");
+    }
+}
+
+// Mostrar los registros del administrador en la tabla
+function mostrarRegistrosAdmin(votantes) {
+    const tabla = document.getElementById('tablaVotantes');
+    tabla.innerHTML = votantes.map(v => `
+        <tr>
+            <td>${v.cedula}</td>
+            <td>${v.nombre}</td>
+            <td>${v.telefono}</td>
+            <td>${v.municipio}</td>
+            <td>${v.direccion}</td>
+            <td>${v.barrio}</td>
+            <td>${v.genero}</td>
+            <td>${v.edad}</td>
+            <td>${v.profesion}</td>
+            <td>${v.lider}</td>
+            <td>${v.tipoLider}</td>
+            <td>${new Date(v.fecha).toLocaleString("es-ES", { hour12: false })}</td>
+        </tr>
+    `).join('');
+}
+
+// Cargar registros del usuario actual al cargar la página
+cargarMisRegistros();
