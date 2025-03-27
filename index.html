@@ -233,7 +233,7 @@
         function getOrCreateUserId() {
             let userId = localStorage.getItem('userId');
             if (!userId) {
-                userId = `user-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
+                userId = user-${Date.now()}-${Math.random().toString(36).substring(2, 15)};
                 localStorage.setItem('userId', userId);
             }
             return userId;
@@ -258,27 +258,7 @@
                 nota: document.getElementById('nota').value.trim() || ""
             };
 
-            const editandoCedula = localStorage.getItem('editandoCedula');
-
-    if (editandoCedula && editandoCedula === data.cedula) {
-        // Modo edición
-        const response = await fetch(`${API_URL}/actualizar`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        });
-
-        if (response.ok) {
-            localStorage.removeItem('editandoCedula');
-            document.getElementById('voterForm').reset();
-            cargarMisRegistros();
-        } else {
-            alert("❌ Error al actualizar el registro");
-        }
-
-    } else {
-
-            const response = await fetch(`${API_URL}/registrar`, {
+            const response = await fetch(${API_URL}/registrar, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
@@ -290,7 +270,7 @@
             } else {
                 console.error("❌ Error al registrar el votante");
             }
-        }
+        });
 
     async function cargarMisRegistros() {
     const userId = localStorage.getItem('userId');
@@ -299,14 +279,14 @@
         return;
     }
 
-    const url = `${API_URL}/mis-registros?userId=${userId}`;
+    const url = ${API_URL}/mis-registros?userId=${userId};
     console.log("📡 Consultando:", url); // Verificar que la URL es correcta
 
     try {
         const response = await fetch(url);
 
         if (!response.ok) {
-            throw new Error(`Error al obtener registros: ${response.statusText}`);
+            throw new Error(Error al obtener registros: ${response.statusText});
         }
 
         const votantes = await response.json();
@@ -341,7 +321,6 @@
                 <td>${v.tipolider}</td>
                 <td>${v.nota ? v.nota : "Sin nota"}</td>
                 <td>${new Date(v.fecha).toLocaleString("es-ES", { hour12: false })}</td>
-                <td><button onclick='editarRegistro(${JSON.stringify(v)})'>Editar</button></td>
             </tr>
         `).join('');
     } catch (error) {
@@ -352,13 +331,13 @@
         // Función de login para el administrador
     function loginAdmin() {
         const password = document.getElementById('adminPassword').value.trim();
-        const url = `${API_URL}/admin/registros?password=${password}`;
+        const url = ${API_URL}/admin/registros?password=${password};
         console.log("🔍 Consultando:", url); // Depuración
 
         fetch(url)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error(`Error de autenticación: ${response.statusText}`);
+                    throw new Error(Error de autenticación: ${response.statusText});
                 }
                 return response.json();
             })
@@ -371,25 +350,6 @@
                 alert("❌ Contraseña incorrecta o error en el servidor");
             });
     }
-
-    // Boton editar    
-    function editarRegistro(votante) {
-    document.getElementById('cedula').value = votante.cedula;
-    document.getElementById('nombre').value = votante.nombre;
-    document.getElementById('telefono').value = votante.telefono;
-    document.getElementById('municipio').value = votante.municipio;
-    document.getElementById('direccion').value = votante.direccion;
-    document.getElementById('barrio').value = votante.barrio;
-    document.getElementById('genero').value = votante.genero;
-    document.getElementById('edad').value = votante.edad;
-    document.getElementById('profesion').value = votante.profesion;
-    document.getElementById('lider').value = votante.lider;
-    document.getElementById('tipoLider').value = votante.tipolider;
-    document.getElementById('nota').value = votante.nota;
-
-    // Guardamos que estamos editando este registro
-    localStorage.setItem('editandoCedula', votante.cedula);
-}
 
     // Mostrar los registros del administrador en la tabla
     function mostrarRegistrosAdmin(votantes) {
