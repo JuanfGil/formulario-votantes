@@ -286,7 +286,7 @@
         const response = await fetch(url);
 
         if (!response.ok) {
-            throw new Error(Error al obtener registros: ${response.statusText});
+            throw new Error(`Error al obtener registros: ${response.statusText}`);
         }
 
         const votantes = await response.json();
